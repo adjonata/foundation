@@ -1,0 +1,19 @@
+import { authService } from '../../services/auth.service'
+import { registerSchema } from '../../schemas/auth.schema'
+import { setAuthCookies } from '../../utils/cookies'
+import { toHttpError } from '../../utils/errors'
+import { ok } from '../../utils/response'
+
+export default defineEventHandler(async (event) => {
+  try {
+    const body = await readBody(event)
+    const input = registerSchema.parse(body)
+    const result = await authService.register(input)
+
+    setAuthCookies(event, result.accessToken, result.refreshToken)
+
+    return ok({ user: result.user })
+  } catch (error) {
+    throw toHttpError(error)
+  }
+})

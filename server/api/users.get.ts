@@ -1,6 +1,12 @@
+import { userService } from '../services/user.service'
+import { toHttpError } from '../utils/errors'
+import { ok } from '../utils/response'
+
 export default defineEventHandler(async () => {
-  const users = await prisma.user.findMany({
-    include: { posts: true },
-  });
-  return users;
-});
+  try {
+    const users = await userService.listUsers()
+    return ok(users)
+  } catch (error) {
+    throw toHttpError(error)
+  }
+})
