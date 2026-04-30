@@ -1,64 +1,170 @@
-# Nuxt Starter Template
+# order-flow
 
-[![Nuxt UI](https://img.shields.io/badge/Made%20with-Nuxt%20UI-00DC82?logo=nuxt&labelColor=020420)](https://ui.nuxt.com)
+Sistema de gestão de pedidos multi-tenant com autenticação completa, controle de acesso por papel (RBAC) e suporte a múltiplas organizações.
 
-Use this template to get started with [Nuxt UI](https://ui.nuxt.com) quickly.
+## Stack
 
-- [Live demo](https://starter-template.nuxt.dev/)
-- [Documentation](https://ui.nuxt.com/docs/getting-started/installation/nuxt)
+- **Framework:** [Nuxt 4](https://nuxt.com) + [Nitro](https://nitro.unjs.io)
+- **Frontend:** Vue 3, [Nuxt UI](https://ui.nuxt.com), Tailwind CSS 4, Pinia
+- **Backend:** Nitro (server routes, middleware, plugins)
+- **Banco de dados:** PostgreSQL + [Prisma ORM](https://www.prisma.io)
+- **Autenticação:** JWT (access + refresh token), cookies HttpOnly
+- **Segurança:** Argon2 para hash de senhas, tokens rotativos, sessões revogáveis
 
-<a href="https://starter-template.nuxt.dev/" target="_blank">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://ui.nuxt.com/assets/templates/nuxt/starter-dark.png">
-    <source media="(prefers-color-scheme: light)" srcset="https://ui.nuxt.com/assets/templates/nuxt/starter-light.png">
-    <img alt="Nuxt Starter Template" src="https://ui.nuxt.com/assets/templates/nuxt/starter-light.png" width="830" height="466">
-  </picture>
-</a>
+## Requisitos
 
-> The starter template for Vue is on https://github.com/nuxt-ui-templates/starter-vue.
+- Node.js 20+
+- pnpm 10+
+- PostgreSQL 15+
 
-## Quick Start
+## Instalação
 
-```bash [Terminal]
-npm create nuxt@latest -- -t ui
+### 1. Clone o repositório
+
+```bash
+git clone https://github.com/seu-usuario/order-flow.git
+cd order-flow
 ```
 
-## Deploy your own
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-name=starter&repository-url=https%3A%2F%2Fgithub.com%2Fnuxt-ui-templates%2Fstarter&demo-image=https%3A%2F%2Fui.nuxt.com%2Fassets%2Ftemplates%2Fnuxt%2Fstarter-dark.png&demo-url=https%3A%2F%2Fstarter-template.nuxt.dev%2F&demo-title=Nuxt%20Starter%20Template&demo-description=A%20minimal%20template%20to%20get%20started%20with%20Nuxt%20UI.)
-
-## Setup
-
-Make sure to install the dependencies:
+### 2. Instale as dependências
 
 ```bash
 pnpm install
 ```
 
-## Development Server
+### 3. Configure as variáveis de ambiente
 
-Start the development server on `http://localhost:3000`:
+Copie o arquivo de exemplo e preencha os valores:
+
+```bash
+cp .env.example .env
+```
+
+```env
+DATABASE_URL="postgresql://usuario:senha@localhost:5432/orderflow"
+JWT_SECRET="sua-chave-secreta-longa-e-aleatoria"
+ACCESS_TOKEN_TTL=900        # 15 minutos
+REFRESH_TOKEN_TTL=604800    # 7 dias
+```
+
+> **Dica:** gere um JWT_SECRET seguro com `openssl rand -base64 64`
+
+### 4. Configure o banco de dados
+
+Execute as migrations e popule o banco com dados de exemplo:
+
+```bash
+pnpm prisma migrate dev
+pnpm prisma db seed
+```
+
+### 5. Inicie o servidor de desenvolvimento
 
 ```bash
 pnpm dev
 ```
 
-## Production
+Acesse em `http://localhost:3000`
 
-Build the application for production:
+---
+
+## Usuários de exemplo (seed)
+
+Após rodar o seed, os seguintes usuários estarão disponíveis:
+
+| E-mail | Senha | Papel | Organização |
+|---|---|---|---|
+| `superadmin@orderflow.dev` | `123456` | Super Admin | — |
+| `admin@acme-store.dev` | `123456` | Admin da Org | Acme Store |
+| `customer@acme-store.dev` | `123456` | Cliente | Acme Store |
+
+> **Atenção:** troque as senhas antes de qualquer deploy.
+
+---
+
+## Endpoints da API
+
+### Autenticação
+
+| Método | Rota | Descrição |
+|---|---|---|
+| `POST` | `/api/auth/register` | Criar nova conta |
+| `POST` | `/api/auth/login` | Entrar na conta |
+| `POST` | `/api/auth/logout` | Encerrar sessão |
+| `POST` | `/api/auth/refresh` | Renovar tokens |
+
+#### Exemplo: Login
 
 ```bash
-pnpm build
+curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "customer@acme-store.dev", "password": "123456"}'
 ```
 
-Locally preview production build:
+```json
+{
+  "ok": true,
+  "data": {
+    "user": {
+      "id": 3,
+      "name": "Customer",
+      "email": "customer@acme-store.dev",
+      "role": "CUSTOMER",
+      "organizationId": 1
+    }
+  }
+}
+```
+
+Os tokens são enviados automaticamente como cookies `HttpOnly`.
+
+### Utilitários
+
+| Método | Rota | Descrição |
+|---|---|---|
+| `GET` | `/api/ping` | Health check |
+
+---
+
+## Arquitetura do servidor
+
+```
+server/
+├── api/           # Rotas HTTP (Nitro file-based routing)
+│   └── auth/      # Endpoints de autenticação
+├── middleware/    # Auth passivo + proteção de rotas admin
+├── plugins/       # Inicialização do banco de dados
+├── repositories/  # Acesso ao banco via Prisma
+├── schemas/       # Validação com Zod
+├── services/      # Lógica de negócio
+├── types/         # Tipos globais (ex: H3EventContext)
+└── utils/         # JWT, cookies, erros, resposta padrão
+```
+
+Toda requisição segue a cadeia: `rota → service → repository → banco`
+
+---
+
+## Papéis e permissões (RBAC)
+
+| Papel | Acesso |
+|---|---|
+| `SUPER_ADMIN` | Acesso total ao sistema |
+| `ORG_ADMIN` | Gerencia usuários e pedidos da própria organização |
+| `CUSTOMER` | Visualiza e cria seus próprios pedidos |
+
+Rotas sob `/api/admin/*` exigem `SUPER_ADMIN`.
+
+---
+
+## Comandos úteis
 
 ```bash
-pnpm preview
+pnpm dev                      # Servidor de desenvolvimento
+pnpm build                    # Build de produção
+pnpm preview                  # Preview do build
+
+pnpm prisma migrate dev       # Rodar migrations
+pnpm prisma db seed           # Popular banco com dados de exemplo
+pnpm prisma studio            # Interface visual do banco
 ```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
-
-## Renovate integration
-
-Install [Renovate GitHub app](https://github.com/apps/renovate/installations/select_target) on your repository and you are good to go.
