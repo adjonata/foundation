@@ -1,0 +1,63 @@
+# order-flow
+
+## Stack
+- Nuxt 4 + Nitro, Vue 3, Pinia
+- Prisma + PostgreSQL
+- Nuxt UI + Tailwind CSS 4
+- Zod para validação
+- Argon2 para hash de senha
+- Jose para JWT
+
+## Arquitetura do servidor
+Sempre seguir a cadeia: `routes → services → repositories → Prisma`
+
+- **Routes** (`server/api/`): apenas leitura de body/params, validação e resposta
+- **Services** (`server/services/`): lógica de negócio
+- **Repositories** (`server/repositories/`): acesso ao banco via Prisma
+- **Schemas** (`server/schemas/`): validação com Zod
+- **Utils** (`server/utils/`): helpers reutilizáveis (jwt, cookies, errors, response)
+
+## Convenções de código
+- Respostas de sucesso: `ok<T>(data)` de `~/server/utils/response`
+- Erros: lançar `AppError` e converter com `toHttpError()` no handler
+- Nunca expor `passwordHash` em respostas
+- Comentários e mensagens de erro em português
+
+## Padrão de commits
+
+Seguir [Conventional Commits](https://www.conventionalcommits.org/) com **tipo, escopo e descrição sempre em português**.
+
+### Formato
+```
+tipo(escopo): descrição no imperativo, em português
+```
+
+### Tipos permitidos
+| Tipo | Quando usar |
+|---|---|
+| `feat` | Nova funcionalidade |
+| `fix` | Correção de bug |
+| `chore` | Manutenção, deps, configuração |
+| `refactor` | Refatoração sem mudança de comportamento |
+| `docs` | Documentação |
+| `test` | Testes |
+| `style` | Formatação, sem mudança de lógica |
+
+### Escopos sugeridos
+`auth`, `users`, `orders`, `organizations`, `db`, `ui`, `api`, `config`, `deps`
+
+### Exemplos
+```
+feat(auth): adicionar refresh token rotativo
+fix(users): corrigir validação de email duplicado
+chore(deps): atualizar prisma para 7.9
+refactor(auth): extrair lógica de hash para utilitário
+feat(orders): implementar listagem paginada de pedidos
+docs: adicionar documentação de rotas da API
+```
+
+### Regras
+- Descrição em **português**, no **imperativo** ("adicionar", não "adicionando" ou "adicionado")
+- Sem ponto final na descrição
+- Escopo em minúsculas
+- Uma mudança por commit — não agrupar features não relacionadas
