@@ -137,5 +137,37 @@ export const authService = {
     } catch {
       // Token invalido no logout nao deve quebrar resposta.
     }
+  },
+
+  async getMe(accessToken: string | undefined) {
+    if (!accessToken) {
+      throw new AppError('UNAUTHORIZED', 'Nao autenticado', 401)
+    }
+
+    const payload = await verifyToken(accessToken, 'access')
+    const sessionId = Number(payload.sessionId)
+    if (!Number.isFinite(sessionId)) {
+      throw new AppError('INVALID_TOKEN', 'Sessao invalida', 401)
+    }
+
+    const session = await authRepository.findSessionById(sessionId)
+    if (!session || session.revokedAt) {
+      throw new AppError('INVALID_TOKEN', 'Sessao invalida', 401)
+    }
+    if (session.expiresAt.getTime() < Date.now()) {
+      throw new AppError('INVALID_TOKEN', 'Sessao expirada', 401)
+    }
+
+    const userId = Number(payload.sub)
+    if (!Number.isFinite(userId) || session.userId !== userId) {
+      throw new AppError('INVALID_TOKEN', 'Sessao invalida', 401)
+    }
+
+    const user = await userRepository.findById(userId)
+    if (!user) {
+      throw new AppError('INVALID_TOKEN', 'Usuario nao encontrado', 401)
+    }
+
+    return sanitizeUser(user)
   }
 }
