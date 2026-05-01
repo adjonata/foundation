@@ -25,6 +25,28 @@ Sempre seguir a cadeia: `routes → services → repositories → Prisma`
 - Nunca expor `passwordHash` em respostas
 - Comentários e mensagens de erro em português
 
+## Padrão de branches
+
+```
+tipo/descricao-curta-em-portugues
+```
+
+### Exemplos
+```
+feat/auth-frontend
+feat/rbac-permissions
+fix/refresh-token-rotativo
+chore/atualizar-dependencias
+docs/atualizar-roadmap
+```
+
+### Regras
+- Usar o mesmo **tipo** do commit que será gerado na branch
+- Descrição em **português**, com hífens, sem acentos
+- Sem números de issue no nome (usar na mensagem do PR)
+
+---
+
 ## Padrão de commits
 
 Seguir [Conventional Commits](https://www.conventionalcommits.org/) com **tipo, escopo e descrição sempre em português**.
