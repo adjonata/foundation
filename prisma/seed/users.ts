@@ -5,43 +5,30 @@ async function makePasswordHash() {
   return argon2.hash('123456')
 }
 
-export async function seedUsers(prisma: PrismaClient, organizationId: number) {
+export async function seedUsers(prisma: PrismaClient) {
   const passwordHash = await makePasswordHash()
 
   const superAdmin = await prisma.user.upsert({
-    where: { email: 'superadmin@orderflow.dev' },
+    where: { email: 'admin@starter.dev' },
     update: {},
     create: {
       name: 'Super Admin',
-      email: 'superadmin@orderflow.dev',
+      email: 'admin@starter.dev',
       passwordHash,
       role: Role.SUPER_ADMIN
     }
   })
 
-  const orgAdmin = await prisma.user.upsert({
-    where: { email: 'admin@acme-store.dev' },
+  const user = await prisma.user.upsert({
+    where: { email: 'user@starter.dev' },
     update: {},
     create: {
-      name: 'Org Admin',
-      email: 'admin@acme-store.dev',
+      name: 'Usuário',
+      email: 'user@starter.dev',
       passwordHash,
-      role: Role.ORG_ADMIN,
-      organizationId
+      role: Role.USER
     }
   })
 
-  const customer = await prisma.user.upsert({
-    where: { email: 'customer@acme-store.dev' },
-    update: {},
-    create: {
-      name: 'Customer',
-      email: 'customer@acme-store.dev',
-      passwordHash,
-      role: Role.CUSTOMER,
-      organizationId
-    }
-  })
-
-  return { superAdmin, orgAdmin, customer }
+  return { superAdmin, user }
 }
