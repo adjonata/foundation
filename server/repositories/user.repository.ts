@@ -6,7 +6,6 @@ type CreateUserInput = {
   email: string
   passwordHash: string
   role?: Role
-  organizationId?: number | null
 }
 
 export const userRepository = {
@@ -30,8 +29,7 @@ export const userRepository = {
         name: input.name,
         email: input.email,
         passwordHash: input.passwordHash,
-        role: input.role ?? Role.CUSTOMER,
-        organizationId: input.organizationId ?? null
+        role: input.role ?? Role.USER
       }
     })
   }

@@ -3,7 +3,6 @@ declare module 'h3' {
     auth?: {
       userId: number
       role: string
-      organizationId: number | null
       sessionId: string
     }
   }

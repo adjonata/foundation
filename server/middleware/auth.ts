@@ -10,7 +10,6 @@ export default defineEventHandler(async (event) => {
     event.context.auth = {
       userId: Number(payload.sub),
       role: payload.role,
-      organizationId: payload.organizationId,
       sessionId: payload.sessionId
     }
   } catch {

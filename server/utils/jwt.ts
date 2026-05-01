@@ -16,7 +16,6 @@ function getSecret() {
 export type AuthTokenPayload = {
   sub: string
   role: string
-  organizationId: number | null
   sessionId: string
   type: 'access' | 'refresh'
 }

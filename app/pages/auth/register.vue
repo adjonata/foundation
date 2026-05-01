@@ -83,7 +83,7 @@
 import type { FormSubmitEvent } from '@nuxt/ui'
 import { registerSchema, type RegisterSchema } from '~/schemas/auth'
 
-useSeoMeta({ title: 'Criar conta — order-flow' })
+useSeoMeta({ title: 'Criar conta — foundation' })
 
 const state = reactive<Partial<RegisterSchema>>({
   name: undefined,

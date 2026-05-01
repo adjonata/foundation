@@ -1,6 +1,6 @@
-# order-flow
+# foundation
 
-Sistema de gestão de pedidos multi-tenant com autenticação completa, controle de acesso por papel (RBAC) e suporte a múltiplas organizações.
+Template base para aplicações full-stack com autenticação completa, RBAC e painel admin. Construído para ser clonado e estendido com os domínios específicos de cada projeto.
 
 ## Stack
 
@@ -22,8 +22,8 @@ Sistema de gestão de pedidos multi-tenant com autenticação completa, controle
 ### 1. Clone o repositório
 
 ```bash
-git clone https://github.com/seu-usuario/order-flow.git
-cd order-flow
+git clone https://github.com/seu-usuario/foundation.git
+cd foundation
 ```
 
 ### 2. Instale as dependências
@@ -34,31 +34,27 @@ pnpm install
 
 ### 3. Configure as variáveis de ambiente
 
-Copie o arquivo de exemplo e preencha os valores:
-
 ```bash
 cp .env.example .env
 ```
 
 ```env
-DATABASE_URL="postgresql://usuario:senha@localhost:5432/orderflow"
+DATABASE_URL="postgresql://usuario:senha@localhost:5432/nuxt_starter"
 JWT_SECRET="sua-chave-secreta-longa-e-aleatoria"
 ACCESS_TOKEN_TTL=900        # 15 minutos
 REFRESH_TOKEN_TTL=604800    # 7 dias
 ```
 
-> **Dica:** gere um JWT_SECRET seguro com `openssl rand -base64 64`
+> Gere um JWT_SECRET seguro com `openssl rand -base64 64`
 
 ### 4. Configure o banco de dados
-
-Execute as migrations e popule o banco com dados de exemplo:
 
 ```bash
 pnpm prisma migrate dev
 pnpm prisma db seed
 ```
 
-### 5. Inicie o servidor de desenvolvimento
+### 5. Inicie o servidor
 
 ```bash
 pnpm dev
@@ -68,17 +64,14 @@ Acesse em `http://localhost:3000`
 
 ---
 
-## Usuários de exemplo (seed)
+## Usuários padrão (seed)
 
-Após rodar o seed, os seguintes usuários estarão disponíveis:
+| E-mail | Senha | Papel |
+|---|---|---|
+| `admin@starter.dev` | `123456` | Super Admin |
+| `user@starter.dev` | `123456` | Usuário comum |
 
-| E-mail | Senha | Papel | Organização |
-|---|---|---|---|
-| `superadmin@orderflow.dev` | `123456` | Super Admin | — |
-| `admin@acme-store.dev` | `123456` | Admin da Org | Acme Store |
-| `customer@acme-store.dev` | `123456` | Cliente | Acme Store |
-
-> **Atenção:** troque as senhas antes de qualquer deploy.
+> Troque as senhas antes de qualquer deploy.
 
 ---
 
@@ -93,36 +86,13 @@ Após rodar o seed, os seguintes usuários estarão disponíveis:
 | `POST` | `/api/auth/logout` | Encerrar sessão |
 | `POST` | `/api/auth/refresh` | Renovar tokens |
 
-#### Exemplo: Login
-
-```bash
-curl -X POST http://localhost:3000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email": "customer@acme-store.dev", "password": "123456"}'
-```
-
-```json
-{
-  "ok": true,
-  "data": {
-    "user": {
-      "id": 3,
-      "name": "Customer",
-      "email": "customer@acme-store.dev",
-      "role": "CUSTOMER",
-      "organizationId": 1
-    }
-  }
-}
-```
-
-Os tokens são enviados automaticamente como cookies `HttpOnly`.
-
 ### Utilitários
 
 | Método | Rota | Descrição |
 |---|---|---|
 | `GET` | `/api/ping` | Health check |
+
+Os tokens são enviados automaticamente como cookies `HttpOnly`.
 
 ---
 
@@ -145,13 +115,13 @@ Toda requisição segue a cadeia: `rota → service → repository → banco`
 
 ---
 
-## Papéis e permissões (RBAC)
+## Papéis
 
 | Papel | Acesso |
 |---|---|
 | `SUPER_ADMIN` | Acesso total ao sistema |
-| `ORG_ADMIN` | Gerencia usuários e pedidos da própria organização |
-| `CUSTOMER` | Visualiza e cria seus próprios pedidos |
+| `ADMIN` | Acesso administrativo padrão |
+| `USER` | Acesso de usuário comum |
 
 Rotas sob `/api/admin/*` exigem `SUPER_ADMIN`.
 
@@ -165,6 +135,6 @@ pnpm build                    # Build de produção
 pnpm preview                  # Preview do build
 
 pnpm prisma migrate dev       # Rodar migrations
-pnpm prisma db seed           # Popular banco com dados de exemplo
+pnpm prisma db seed           # Popular banco com dados padrão
 pnpm prisma studio            # Interface visual do banco
 ```

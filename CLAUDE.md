@@ -1,4 +1,6 @@
-# order-flow
+# foundation
+
+Template base para aplicações full-stack com autenticação completa, RBAC e painel admin.
 
 ## Stack
 - Nuxt 4 + Nitro, Vue 3, Pinia
@@ -44,7 +46,7 @@ tipo(escopo): descrição no imperativo, em português
 | `style` | Formatação, sem mudança de lógica |
 
 ### Escopos sugeridos
-`auth`, `users`, `orders`, `organizations`, `db`, `ui`, `api`, `config`, `deps`
+`auth`, `users`, `roles`, `permissions`, `admin`, `db`, `ui`, `api`, `config`, `deps`
 
 ### Exemplos
 ```
@@ -52,8 +54,8 @@ feat(auth): adicionar refresh token rotativo
 fix(users): corrigir validação de email duplicado
 chore(deps): atualizar prisma para 7.9
 refactor(auth): extrair lógica de hash para utilitário
-feat(orders): implementar listagem paginada de pedidos
-docs: adicionar documentação de rotas da API
+feat(roles): implementar middleware de verificação de permissão
+docs: atualizar documentação de rotas da API
 ```
 
 ### Regras

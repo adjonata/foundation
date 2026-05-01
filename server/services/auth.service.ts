@@ -15,25 +15,19 @@ function refreshExpiryDate() {
   return new Date(now + refreshTokenTtl() * 1000)
 }
 
-function sanitizeUser(user: { id: number, email: string, name: string | null, role: string, organizationId: number | null }) {
+function sanitizeUser(user: { id: number, email: string, name: string | null, role: string }) {
   return {
     id: user.id,
     email: user.email,
     name: user.name,
-    role: user.role,
-    organizationId: user.organizationId
+    role: user.role
   }
 }
 
-async function issueTokenPair(user: {
-  id: number
-  role: string
-  organizationId: number | null
-}) {
+async function issueTokenPair(user: { id: number, role: string }) {
   const draftPayload = {
     sub: String(user.id),
-    role: user.role,
-    organizationId: user.organizationId
+    role: user.role
   }
 
   const session = await authRepository.createSession({
@@ -43,17 +37,11 @@ async function issueTokenPair(user: {
   })
 
   const sessionId = String(session.id)
-  const refreshToken = await signRefreshToken({
-    ...draftPayload,
-    sessionId
-  })
+  const refreshToken = await signRefreshToken({ ...draftPayload, sessionId })
 
   await authRepository.updateSessionTokenHash(session.id, hashRefreshToken(refreshToken))
 
-  const accessToken = await signAccessToken({
-    ...draftPayload,
-    sessionId: String(session.id)
-  })
+  const accessToken = await signAccessToken({ ...draftPayload, sessionId: String(session.id) })
 
   return { accessToken, refreshToken }
 }
@@ -72,11 +60,7 @@ export const authService = {
       passwordHash
     })
 
-    const tokens = await issueTokenPair({
-      id: user.id,
-      role: user.role,
-      organizationId: user.organizationId
-    })
+    const tokens = await issueTokenPair(user)
 
     return {
       user: sanitizeUser(user),
@@ -95,11 +79,7 @@ export const authService = {
       throw new AppError('INVALID_CREDENTIALS', 'Credenciais invalidas', 401)
     }
 
-    const tokens = await issueTokenPair({
-      id: user.id,
-      role: user.role,
-      organizationId: user.organizationId
-    })
+    const tokens = await issueTokenPair(user)
 
     return {
       user: sanitizeUser(user),
@@ -138,11 +118,7 @@ export const authService = {
 
     await authRepository.revokeSession(session.id)
 
-    const tokens = await issueTokenPair({
-      id: user.id,
-      role: user.role,
-      organizationId: user.organizationId
-    })
+    const tokens = await issueTokenPair(user)
 
     return {
       user: sanitizeUser(user),

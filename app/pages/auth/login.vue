@@ -69,7 +69,7 @@
 import type { FormSubmitEvent } from '@nuxt/ui'
 import { loginSchema, type LoginSchema } from '~/schemas/auth'
 
-useSeoMeta({ title: 'Entrar — order-flow' })
+useSeoMeta({ title: 'Entrar — foundation' })
 
 const state = reactive<Partial<LoginSchema>>({
   email: undefined,
