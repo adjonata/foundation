@@ -21,8 +21,8 @@ Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (regist
 - [x] Pinia store `useAuthStore` — `user`, `isAuthenticated`, `role` (`app/stores/auth.ts`)
 - [x] Ações: `login()`, `register()`, `logout()`, `fetchMe()`, `ensureSession()`; `$fetch` com `credentials: 'include'` e reencaminhamento de cookie no SSR
 - [x] Helper `getFetchErrorMessage` em `app/utils/fetchError.ts` (toasts nas páginas)
-- [ ] Composable `useApi` ou wrapper de `$fetch` com tratamento de erro padrão (além do helper)
-- [ ] Interceptor automático de refresh: ao receber `401`, chamar `/api/auth/refresh` e repetir a requisição
+- [x] Composable `useApi` com módulos por seção da API (inicial: `auth`) e tratamento de erro padrão em camada única
+- [x] Interceptor automático de refresh: ao receber `401`, chamar `/api/auth/refresh` e repetir a requisição
 - [x] Páginas `app/pages/entrar.vue` e `app/pages/cadastrar.vue` integradas com a store, redirect pós-sucesso e query `redirect` segura
 - [ ] Route middleware `auth.ts` — redirecionar para `/entrar` se não autenticado
 - [ ] Route middleware `guest.ts` — redirecionar para `/` se já autenticado
