@@ -1,4 +1,7 @@
-<script setup>
+<script setup lang="ts">
+const config = useRuntimeConfig()
+const appName = config.public.appName as string
+
 useHead({
   meta: [
     { name: 'viewport', content: 'width=device-width, initial-scale=1' }
@@ -9,7 +12,7 @@ useHead({
 })
 
 useSeoMeta({
-  title: 'foundation',
+  title: appName,
   description: 'Template base para aplicações full-stack com autenticação completa, RBAC e painel admin.'
 })
 </script>

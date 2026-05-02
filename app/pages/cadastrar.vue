@@ -12,7 +12,7 @@
 
       <UCard>
         <UForm
-          :schema="registerSchema"
+          :schema="registerFormSchema"
           :state="state"
           class="space-y-4"
           @submit="onSubmit"
@@ -71,7 +71,7 @@
 
       <p class="text-center text-sm text-muted">
         Já tem uma conta?
-        <UButton variant="link" size="sm" class="p-0 h-auto" to="/auth/login">
+        <UButton variant="link" size="sm" class="p-0 h-auto" to="/entrar">
           Entrar
         </UButton>
       </p>
@@ -81,9 +81,17 @@
 
 <script setup lang="ts">
 import type { FormSubmitEvent } from '@nuxt/ui'
-import { registerSchema, type RegisterSchema } from '~/schemas/auth'
+import { registerFormSchema, type RegisterSchema } from '~/schemas/auth'
 
-useSeoMeta({ title: 'Criar conta — foundation' })
+const route = useRoute()
+const auth = useAuthStore()
+const { $toast } = useNuxtApp()
+const config = useRuntimeConfig()
+const appName = computed(() => config.public.appName as string)
+
+useSeoMeta({
+  title: computed(() => `Criar conta — ${appName.value}`)
+})
 
 const state = reactive<Partial<RegisterSchema>>({
   name: undefined,
@@ -95,10 +103,27 @@ const state = reactive<Partial<RegisterSchema>>({
 const loading = ref(false)
 const showPassword = ref(false)
 
-async function onSubmit(_event: FormSubmitEvent<RegisterSchema>) {
+async function onSubmit(event: FormSubmitEvent<RegisterSchema>) {
   loading.value = true
-  // TODO: integrar com /api/auth/register
-  await new Promise(resolve => setTimeout(resolve, 800))
-  loading.value = false
+  try {
+    await auth.register({
+      name: event.data.name,
+      email: event.data.email,
+      password: event.data.password
+    })
+    const rawRedirect = route.query.redirect
+    const redirect = typeof rawRedirect === 'string' && rawRedirect.startsWith('/') && !rawRedirect.startsWith('//')
+      ? rawRedirect
+      : '/'
+    await navigateTo(redirect)
+  } catch (error: unknown) {
+    $toast.add({
+      title: 'Falha no cadastro',
+      description: getFetchErrorMessage(error),
+      color: 'error'
+    })
+  } finally {
+    loading.value = false
+  }
 }
 </script>
