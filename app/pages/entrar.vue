@@ -57,7 +57,7 @@
 
       <p class="text-center text-sm text-muted">
         Não tem uma conta?
-        <UButton variant="link" size="sm" class="p-0 h-auto" to="/auth/register">
+        <UButton variant="link" size="sm" class="p-0 h-auto" to="/cadastrar">
           Cadastre-se
         </UButton>
       </p>
@@ -69,7 +69,15 @@
 import type { FormSubmitEvent } from '@nuxt/ui'
 import { loginSchema, type LoginSchema } from '~/schemas/auth'
 
-useSeoMeta({ title: 'Entrar — foundation' })
+const route = useRoute()
+const auth = useAuthStore()
+const { $toast } = useNuxtApp()
+const config = useRuntimeConfig()
+const appName = computed(() => config.public.appName as string)
+
+useSeoMeta({
+  title: computed(() => `Entrar — ${appName.value}`)
+})
 
 const state = reactive<Partial<LoginSchema>>({
   email: undefined,
@@ -79,10 +87,26 @@ const state = reactive<Partial<LoginSchema>>({
 const loading = ref(false)
 const showPassword = ref(false)
 
-async function onSubmit(_event: FormSubmitEvent<LoginSchema>) {
+async function onSubmit(event: FormSubmitEvent<LoginSchema>) {
   loading.value = true
-  // TODO: integrar com /api/auth/login
-  await new Promise(resolve => setTimeout(resolve, 800))
-  loading.value = false
+  try {
+    await auth.login({
+      email: event.data.email,
+      password: event.data.password
+    })
+    const rawRedirect = route.query.redirect
+    const redirect = typeof rawRedirect === 'string' && rawRedirect.startsWith('/') && !rawRedirect.startsWith('//')
+      ? rawRedirect
+      : '/'
+    await navigateTo(redirect)
+  } catch (error: unknown) {
+    $toast.add({
+      title: 'Falha no login',
+      description: getFetchErrorMessage(error),
+      color: 'error'
+    })
+  } finally {
+    loading.value = false
+  }
 }
 </script>

@@ -15,17 +15,19 @@ Base no servidor já existente: login, register, logout, refresh (`/api/auth/*`)
 - [x] Cabeçalhos de cache reutilizáveis (`server/utils/cacheHeaders.ts`): `setPrivateNoStoreHeaders`, `setNoStoreHeaders`, `setPublicCacheHeaders`, `setVaryHeaders`, etc.
 - [x] Middleware global `server/middleware/00.api-cache.ts` — aplica `private, no-store` a todas as rotas `/api/*` sem editar cada handler; prefixos em `API_CACHE_OPT_OUT_PREFIXES` para rotas públicas cacheáveis (definir nesses handlers `setPublicCacheHeaders` / SWR, etc.)
 
-### Front — pendente
-- [ ] Pinia store `useAuthStore` — estado global: `user`, `isAuthenticated`, `isAdmin`
-- [ ] Ações no store: `login()`, `register()`, `logout()`, `fetchMe()`
-- [ ] Composable `$api` ou wrapper de `$fetch` com tratamento de erro padrão
+### Front — em curso
+Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (registo). Redirecionamento de URLs antigas: `/auth/login` → `/entrar`, `/auth/register` → `/cadastrar` (`nuxt.config` `routeRules`).
+
+- [x] Pinia store `useAuthStore` — `user`, `isAuthenticated`, `role` (`app/stores/auth.ts`)
+- [x] Ações: `login()`, `register()`, `logout()`, `fetchMe()`, `ensureSession()`; `$fetch` com `credentials: 'include'` e reencaminhamento de cookie no SSR
+- [x] Helper `getFetchErrorMessage` em `app/utils/fetchError.ts` (toasts nas páginas)
+- [ ] Composable `useApi` ou wrapper de `$fetch` com tratamento de erro padrão (além do helper)
 - [ ] Interceptor automático de refresh: ao receber `401`, chamar `/api/auth/refresh` e repetir a requisição
-- [ ] Integrar página `/auth/login` com `authStore.login()` + redirect pós-login
-- [ ] Integrar página `/auth/register` com `authStore.register()` + redirect pós-cadastro
-- [ ] Route middleware `auth.ts` — redirecionar para `/auth/login` se não autenticado
-- [ ] Route middleware `guest.ts` — redirecionar para `/` se já autenticado (evitar acessar login logado)
-- [ ] Botão de logout no header com chamada ao `authStore.logout()`
-- [ ] `runtimeConfig.public.appName` + atualizar `useSeoMeta` nas páginas de auth (título com nome do projeto)
+- [x] Páginas `app/pages/entrar.vue` e `app/pages/cadastrar.vue` integradas com a store, redirect pós-sucesso e query `redirect` segura
+- [ ] Route middleware `auth.ts` — redirecionar para `/entrar` se não autenticado
+- [ ] Route middleware `guest.ts` — redirecionar para `/` se já autenticado
+- [ ] Botão de logout no header com `authStore.logout()`
+- [x] `runtimeConfig.public.appName` + `useSeoMeta` em `entrar` / `cadastrar` e `app.vue`
 
 ---
 

@@ -1,0 +1,34 @@
+---
+description: Contrato shared/API Nitro e tipagem $fetch; alinhado a docs Nuxt 4
+alwaysApply: true
+---
+
+# Tipagem API (`server/api`) e diretorio `shared`
+
+Referencia: [Nuxt 4 — Directory structure: shared](https://nuxt.com/docs/4.x/directory-structure/shared).
+
+## `$fetch` e rotas internas
+
+Handlers em `server/api/**/*.ts` entram no mapa `InternalApi` do Nitro (gerado em `.nuxt/types/nitro-routes.d.ts`). O `$fetch` no app infere o **retorno** a partir do handler (`Serialize` + tipo de retorno). **Nao e obrigatorio** passar generico em `$fetch('/api/...')` para essas rotas.
+
+## Diretorio `shared/` (Nuxt 4)
+
+- Codigo em `shared/` pode ser usado no app Vue e no servidor Nitro.
+- **Restricao:** nada em `shared/` pode importar codigo **Vue** ou **Nitro** (tipos utilitarios, Zod, constantes, helpers puros).
+- O Nuxt configura o alias **`#shared`** para imports explicitos.
+
+### Auto-import
+
+Somente arquivos **diretamente** em `shared/utils/` e `shared/types/` sao auto-importados (mesma regra de escaneamento que `app/composables` / `app/utils`). Subpastas dentro de `utils/` ou `types/` **nao** entram no auto-import, salvo se adicionar essas pastas em `imports.dirs` e `nitro.imports.dirs`.
+
+Ex.: `shared/types/user.ts` exportando `AuthUser` → disponivel por auto-import no app e em `server/`. Arquivos em outras pastas (ex.: `shared/schemas/`) precisam de **`import` manual** via `#shared/...`.
+
+### Ligacao explicita back ↔ front
+
+O tipo inferido pelo Nitro e **estrutural**; o `$fetch` ja tipa a resposta **sem** depender de `shared/` no cliente.
+
+Para **nomear** o contrato no servidor (`sanitizeUser`, `ok()`, etc.) e alinhar ao que o Nitro infere: definir tipos em `shared/types/` (ou schemas em `shared/schemas/` com import `#shared`).
+
+## Reexport no app (opcional)
+
+Reexportar em `app/schemas/*` para `~/schemas/...` mantem uma entrada confortavel no app; a fonte continua em `shared/`.

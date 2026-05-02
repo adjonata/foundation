@@ -3,8 +3,8 @@
     <h1 class="text-3xl font-bold">foundation</h1>
     <p class="text-neutral-500">Template base com autenticação, RBAC e painel admin.</p>
     <div class="flex gap-2">
-      <UButton label="Login" to="/auth/login" color="primary" />
-      <UButton label="Cadastro" to="/auth/register" variant="outline" />
+      <UButton label="Login" to="/entrar" color="primary" />
+      <UButton label="Cadastro" to="/cadastrar" variant="outline" />
     </div>
   </div>
 </template>

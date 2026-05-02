@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto'
-import type { LoginInput, RegisterInput } from '../schemas/auth.schema'
+import type { LoginInput, RegisterInput } from '#shared/schemas/auth'
+import type { AuthUser } from '#shared/types/user'
 import { authRepository } from '../repositories/auth.repository'
 import { userRepository } from '../repositories/user.repository'
 import { AppError } from '../utils/errors'
@@ -15,7 +16,7 @@ function refreshExpiryDate() {
   return new Date(now + refreshTokenTtl() * 1000)
 }
 
-function sanitizeUser(user: { id: number, email: string, name: string | null, role: string }) {
+function sanitizeUser(user: { id: number, email: string, name: string | null, role: string }): AuthUser {
   return {
     id: user.id,
     email: user.email,

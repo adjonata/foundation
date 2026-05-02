@@ -1,5 +1,5 @@
 import { authService } from '../../services/auth.service'
-import { loginSchema } from '../../schemas/auth.schema'
+import { loginSchema } from '#shared/schemas/auth'
 import { setAuthCookies } from '../../utils/cookies'
 import { toHttpError } from '../../utils/errors'
 import { ok } from '../../utils/response'
