@@ -20,10 +20,7 @@ export type AuthTokenPayload = {
   type: 'access' | 'refresh'
 }
 
-async function signToken(
-  payload: Omit<AuthTokenPayload, 'type'>,
-  type: 'access' | 'refresh'
-) {
+async function signToken(payload: Omit<AuthTokenPayload, 'type'>, type: 'access' | 'refresh') {
   const expiresIn = type === 'access' ? ACCESS_TOKEN_TTL : REFRESH_TOKEN_TTL
 
   return new SignJWT({ ...payload, type })

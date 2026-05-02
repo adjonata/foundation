@@ -1,0 +1,32 @@
+---
+description: Garante que codigo gerado pelo Cursor siga o padrao do Prettier do projeto
+alwaysApply: true
+---
+
+# Padrao de codigo (Prettier)
+
+## Objetivo
+
+Garantir que todo codigo criado ou editado pelo Cursor siga o mesmo padrao de formatacao do projeto.
+
+## Fonte de verdade
+
+- Respeitar sempre o `.prettierrc` do repositorio.
+- Nao introduzir formatacao manual que conflite com o Prettier.
+
+## Regras obrigatorias ao gerar/editar codigo
+
+- Usar **aspas simples** em JS/TS quando aplicavel.
+- Nao usar **ponto e virgula** no fim das instrucoes.
+- Manter **virgula final** em estruturas multiline quando aplicavel.
+- Usar **indentacao de 2 espacos** (sem tabs).
+- Considerar **largura de linha de 120** colunas.
+
+## Fluxo esperado para alteracoes
+
+- Ao finalizar alteracoes relevantes, validar formatacao com `pnpm format:check`.
+- Se houver divergencias, aplicar `pnpm format` antes de concluir.
+
+## Observacao
+
+Se existir conflito entre preferencia pessoal e padrao local, prevalece o padrao definido no `.prettierrc` do projeto.

@@ -11,7 +11,7 @@ export default defineEventHandler((event) => {
   const path = event.path
   if (!path.startsWith('/api')) return
 
-  if (API_CACHE_OPT_OUT_PREFIXES.some(prefix => path.startsWith(prefix))) return
+  if (API_CACHE_OPT_OUT_PREFIXES.some((prefix) => path.startsWith(prefix))) return
 
   setPrivateNoStoreHeaders(event)
 })

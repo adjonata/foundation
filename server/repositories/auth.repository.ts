@@ -9,27 +9,27 @@ type CreateSessionInput = {
 export const authRepository = {
   createSession(input: CreateSessionInput) {
     return prisma.authSession.create({
-      data: input
+      data: input,
     })
   },
 
   findSessionById(id: number) {
     return prisma.authSession.findUnique({
-      where: { id }
+      where: { id },
     })
   },
 
   revokeSession(id: number) {
     return prisma.authSession.update({
       where: { id },
-      data: { revokedAt: new Date() }
+      data: { revokedAt: new Date() },
     })
   },
 
   updateSessionTokenHash(id: number, refreshTokenHash: string) {
     return prisma.authSession.update({
       where: { id },
-      data: { refreshTokenHash }
+      data: { refreshTokenHash },
     })
   },
 
@@ -37,9 +37,9 @@ export const authRepository = {
     return prisma.authSession.updateMany({
       where: {
         userId,
-        revokedAt: null
+        revokedAt: null,
       },
-      data: { revokedAt: new Date() }
+      data: { revokedAt: new Date() },
     })
-  }
+  },
 }

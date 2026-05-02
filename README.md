@@ -66,10 +66,10 @@ Acesse em `http://localhost:3000`
 
 ## Usuários padrão (seed)
 
-| E-mail | Senha | Papel |
-|---|---|---|
-| `admin@starter.dev` | `123456` | Super Admin |
-| `user@starter.dev` | `123456` | Usuário comum |
+| E-mail              | Senha    | Papel         |
+| ------------------- | -------- | ------------- |
+| `admin@starter.dev` | `123456` | Super Admin   |
+| `user@starter.dev`  | `123456` | Usuário comum |
 
 > Troque as senhas antes de qualquer deploy.
 
@@ -79,18 +79,18 @@ Acesse em `http://localhost:3000`
 
 ### Autenticação
 
-| Método | Rota | Descrição |
-|---|---|---|
+| Método | Rota                 | Descrição        |
+| ------ | -------------------- | ---------------- |
 | `POST` | `/api/auth/register` | Criar nova conta |
-| `POST` | `/api/auth/login` | Entrar na conta |
-| `POST` | `/api/auth/logout` | Encerrar sessão |
-| `POST` | `/api/auth/refresh` | Renovar tokens |
+| `POST` | `/api/auth/login`    | Entrar na conta  |
+| `POST` | `/api/auth/logout`   | Encerrar sessão  |
+| `POST` | `/api/auth/refresh`  | Renovar tokens   |
 
 ### Utilitários
 
-| Método | Rota | Descrição |
-|---|---|---|
-| `GET` | `/api/ping` | Health check |
+| Método | Rota        | Descrição    |
+| ------ | ----------- | ------------ |
+| `GET`  | `/api/ping` | Health check |
 
 Os tokens são enviados automaticamente como cookies `HttpOnly`.
 
@@ -117,11 +117,11 @@ Toda requisição segue a cadeia: `rota → service → repository → banco`
 
 ## Papéis
 
-| Papel | Acesso |
-|---|---|
-| `SUPER_ADMIN` | Acesso total ao sistema |
-| `ADMIN` | Acesso administrativo padrão |
-| `USER` | Acesso de usuário comum |
+| Papel         | Acesso                       |
+| ------------- | ---------------------------- |
+| `SUPER_ADMIN` | Acesso total ao sistema      |
+| `ADMIN`       | Acesso administrativo padrão |
+| `USER`        | Acesso de usuário comum      |
 
 Rotas sob `/api/admin/*` exigem `SUPER_ADMIN`.
 
