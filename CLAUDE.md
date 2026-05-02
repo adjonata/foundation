@@ -20,7 +20,7 @@ Sempre seguir a cadeia: `routes → services → repositories → Prisma`
 - **Utils** (`server/utils/`): helpers reutilizáveis (jwt, cookies, errors, response)
 
 ## Convenções de código
-- Respostas de sucesso: `ok<T>(data)` de `~/server/utils/response`
+- Respostas de sucesso: `ok(data)` de `~/server/utils/response` — retorna o payload direto no JSON (sem `{ ok, data }`); status opcional `ok(data, codigo, event)` quando diferente de 200
 - Erros: lançar `AppError` e converter com `toHttpError()` no handler
 - Nunca expor `passwordHash` em respostas
 - Comentários e mensagens de erro em português
