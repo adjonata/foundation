@@ -6,9 +6,9 @@ Ordem de implementação dentro do back: `schema → migration → repository �
 
 ---
 
-## 0. Auth — Frontend (próximo)
+## 0. Auth — Frontend
 
-Back já implementado: login, register, logout, refresh (`/api/auth/*`), middleware de proteção, cookies HttpOnly.
+Base no servidor já existente: login, register, logout, refresh (`/api/auth/*`), middleware Nitro de contexto (`server/middleware/auth.ts`), cookies HttpOnly.
 
 ### Back (API) — concluído
 - [x] Rota `GET /api/auth/me` — utilizador autenticado via access token em cookie (`server/api/auth/me.get.ts`, `authService.getMe`)
@@ -71,7 +71,7 @@ Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (regist
 ### Back
 - [ ] Ao fazer refresh, revogar sessão antiga e emitir nova (já parcialmente implementado)
 - [ ] Detectar reutilização de refresh token expirado → revogar todas as sessões do usuário
-- [ ] Rota `GET /api/auth/me` — retornar usuário autenticado via access token
+- [x] Rota `GET /api/auth/me` — ver §0 (concluído)
 
 ### Front
 - [ ] Atualizar o interceptor de refresh (item 0) para lidar com reutilização de token detectada pelo back (revogar sessão local e redirecionar para login)
