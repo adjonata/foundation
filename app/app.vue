@@ -12,6 +12,7 @@ async function handleLogout() {
 
 useHead({
   meta: [{ name: 'viewport', content: 'width=device-width, initial-scale=1' }],
+  link: [{ rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
   htmlAttrs: {
     lang: 'pt-BR',
   },
@@ -27,8 +28,8 @@ useSeoMeta({
   <UApp>
     <header class="border-b border-default">
       <div class="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-4">
-        <NuxtLink to="/" class="text-sm font-semibold text-highlighted hover:opacity-80">
-          {{ appName }}
+        <NuxtLink to="/" class="inline-flex items-center hover:opacity-80" :aria-label="`Voltar para ${appName}`">
+          <img src="/logo.svg" alt="foundation" class="h-7 w-auto" />
         </NuxtLink>
 
         <div class="flex items-center gap-2">
