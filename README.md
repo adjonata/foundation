@@ -1,6 +1,13 @@
 # foundation
 
+![Logo foundation](./public/logo.svg)
+
 Template base para aplicações full-stack com autenticação completa, RBAC e painel admin. Construído para ser clonado e estendido com os domínios específicos de cada projeto.
+
+## Documentação
+
+- [Roadmap do projeto](./docs/ROADMAP.md): lista as etapas planejadas, status de execução e próximos blocos de trabalho (auth, RBAC, admin etc.).
+- [Guia de RBAC](./docs/RBAC.md): explica como permissões funcionam no backend, como adicionar novas permissões e como operar seed/migrações em produção.
 
 ## Stack
 
