@@ -1,0 +1,35 @@
+---
+description: Padroniza comentarios e mensagens em portugues no codigo
+alwaysApply: true
+---
+
+# Comentarios em portugues
+
+## Objetivo
+
+Padronizar comunicacao no codigo para facilitar manutencao do time.
+
+## Regras
+
+- Escrever comentarios de codigo em **portugues**.
+- Escrever mensagens para utilizador e textos de erro em **portugues**.
+- Preferir frases curtas, claras e orientadas ao comportamento.
+- Evitar comentarios obvios; comentar apenas decisoes, regras e trade-offs.
+
+## Exemplos
+
+```ts
+// ❌ BAD
+// Handles token refresh on 401
+
+// ✅ GOOD
+// Revalida o token quando a API responde 401
+```
+
+```ts
+// ❌ BAD
+throw new Error("Invalid credentials")
+
+// ✅ GOOD
+throw new Error("Credenciais invalidas")
+```

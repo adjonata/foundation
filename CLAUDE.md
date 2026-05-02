@@ -3,6 +3,7 @@
 Template base para aplicações full-stack com autenticação completa, RBAC e painel admin.
 
 ## Stack
+
 - Nuxt 4 + Nitro, Vue 3, Pinia
 - Prisma + PostgreSQL
 - Nuxt UI + Tailwind CSS 4
@@ -11,6 +12,7 @@ Template base para aplicações full-stack com autenticação completa, RBAC e p
 - Jose para JWT
 
 ## Arquitetura do servidor
+
 Sempre seguir a cadeia: `routes → services → repositories → Prisma`
 
 - **Routes** (`server/api/`): apenas leitura de body/params, validação e resposta
@@ -20,6 +22,7 @@ Sempre seguir a cadeia: `routes → services → repositories → Prisma`
 - **Utils** (`server/utils/`): helpers reutilizáveis (jwt, cookies, errors, response)
 
 ## Convenções de código
+
 - Respostas de sucesso: `ok(data)` de `~/server/utils/response` — retorna o payload direto no JSON (sem `{ ok, data }`); status opcional `ok(data, codigo, event)` quando diferente de 200
 - Erros: lançar `AppError` e converter com `toHttpError()` no handler
 - Nunca expor `passwordHash` em respostas
@@ -32,6 +35,7 @@ tipo/descricao-curta-em-portugues
 ```
 
 ### Exemplos
+
 ```
 feat/auth-frontend
 feat/rbac-permissions
@@ -41,6 +45,7 @@ docs/atualizar-roadmap
 ```
 
 ### Regras
+
 - Usar o mesmo **tipo** do commit que será gerado na branch
 - Descrição em **português**, com hífens, sem acentos
 - Sem números de issue no nome (usar na mensagem do PR)
@@ -52,25 +57,29 @@ docs/atualizar-roadmap
 Seguir [Conventional Commits](https://www.conventionalcommits.org/) com **tipo, escopo e descrição sempre em português**.
 
 ### Formato
+
 ```
 tipo(escopo): descrição no imperativo, em português
 ```
 
 ### Tipos permitidos
-| Tipo | Quando usar |
-|---|---|
-| `feat` | Nova funcionalidade |
-| `fix` | Correção de bug |
-| `chore` | Manutenção, deps, configuração |
+
+| Tipo       | Quando usar                              |
+| ---------- | ---------------------------------------- |
+| `feat`     | Nova funcionalidade                      |
+| `fix`      | Correção de bug                          |
+| `chore`    | Manutenção, deps, configuração           |
 | `refactor` | Refatoração sem mudança de comportamento |
-| `docs` | Documentação |
-| `test` | Testes |
-| `style` | Formatação, sem mudança de lógica |
+| `docs`     | Documentação                             |
+| `test`     | Testes                                   |
+| `style`    | Formatação, sem mudança de lógica        |
 
 ### Escopos sugeridos
+
 `auth`, `users`, `roles`, `permissions`, `admin`, `db`, `ui`, `api`, `config`, `deps`
 
 ### Exemplos
+
 ```
 feat(auth): adicionar refresh token rotativo
 fix(users): corrigir validação de email duplicado
@@ -81,6 +90,7 @@ docs: atualizar documentação de rotas da API
 ```
 
 ### Regras
+
 - Descrição em **português**, no **imperativo** ("adicionar", não "adicionando" ou "adicionado")
 - Sem ponto final na descrição
 - Escopo em minúsculas

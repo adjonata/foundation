@@ -18,7 +18,7 @@ export const userService = {
     return userRepository.create({
       name: input.name,
       email: input.email,
-      passwordHash
+      passwordHash,
     })
-  }
+  },
 }

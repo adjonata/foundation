@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
     const result = await authService.refresh(refreshToken)
     setAuthCookies(event, result.accessToken, result.refreshToken)
 
-    return ok({ user: result.user })
+    return ok(result.user)
   } catch (error) {
     throw toHttpError(error)
   }

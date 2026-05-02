@@ -8,7 +8,7 @@ async function main() {
   console.log('Seed concluido com sucesso')
   console.log({
     superAdmin: superAdmin.email,
-    user: user.email
+    user: user.email,
   })
 }
 

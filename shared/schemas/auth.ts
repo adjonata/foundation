@@ -5,37 +5,29 @@ export const loginSchema = z.object({
   email: z
     .string()
     .email('E-mail inválido')
-    .transform(value => value.toLowerCase()),
-  password: z
-    .string()
-    .min(6, 'Mínimo de 6 caracteres')
-    .max(72, 'Máximo de 72 caracteres')
+    .transform((value) => value.toLowerCase()),
+  password: z.string().min(6, 'Mínimo de 6 caracteres').max(72, 'Máximo de 72 caracteres'),
 })
 
 /** Corpo de POST /api/auth/register (sem confirmar senha no servidor). */
 export const registerBodySchema = z.object({
-  name: z
-    .string()
-    .min(2, 'Mínimo de 2 caracteres')
-    .max(120, 'Máximo de 120 caracteres')
-    .trim(),
+  name: z.string().min(2, 'Mínimo de 2 caracteres').max(120, 'Máximo de 120 caracteres').trim(),
   email: z
     .string()
     .email('E-mail inválido')
-    .transform(value => value.toLowerCase()),
-  password: z
-    .string()
-    .min(6, 'Mínimo de 6 caracteres')
-    .max(72, 'Máximo de 72 caracteres')
+    .transform((value) => value.toLowerCase()),
+  password: z.string().min(6, 'Mínimo de 6 caracteres').max(72, 'Máximo de 72 caracteres'),
 })
 
 /** Formulario de cadastro (campos extra + mesma regra de negocio que o API body). */
-export const registerFormSchema = registerBodySchema.extend({
-  confirmPassword: z.string()
-}).refine(data => data.password === data.confirmPassword, {
-  message: 'As senhas não coincidem',
-  path: ['confirmPassword']
-})
+export const registerFormSchema = registerBodySchema
+  .extend({
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'As senhas não coincidem',
+    path: ['confirmPassword'],
+  })
 
 export type LoginInput = z.output<typeof loginSchema>
 export type RegisterInput = z.output<typeof registerBodySchema>

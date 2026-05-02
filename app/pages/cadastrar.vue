@@ -2,21 +2,12 @@
   <div class="min-h-screen flex items-center justify-center px-4">
     <div class="w-full max-w-sm space-y-6">
       <div class="text-center space-y-1">
-        <h1 class="text-2xl font-bold text-highlighted">
-          Criar conta
-        </h1>
-        <p class="text-sm text-muted">
-          Preencha os dados abaixo para se cadastrar
-        </p>
+        <h1 class="text-2xl font-bold text-highlighted">Criar conta</h1>
+        <p class="text-sm text-muted">Preencha os dados abaixo para se cadastrar</p>
       </div>
 
       <UCard>
-        <UForm
-          :schema="registerFormSchema"
-          :state="state"
-          class="space-y-4"
-          @submit="onSubmit"
-        >
+        <UForm :schema="registerFormSchema" :state="state" class="space-y-4" @submit="onSubmit">
           <UFormField label="Nome" name="name" required>
             <UInput
               v-model="state.name"
@@ -59,21 +50,13 @@
             />
           </UFormField>
 
-          <UButton
-            type="submit"
-            class="w-full"
-            :loading="loading"
-          >
-            Criar conta
-          </UButton>
+          <UButton type="submit" class="w-full" :loading="loading"> Criar conta </UButton>
         </UForm>
       </UCard>
 
       <p class="text-center text-sm text-muted">
         Já tem uma conta?
-        <UButton variant="link" size="sm" class="p-0 h-auto" to="/entrar">
-          Entrar
-        </UButton>
+        <UButton variant="link" size="sm" class="p-0 h-auto" to="/entrar"> Entrar </UButton>
       </p>
     </div>
   </div>
@@ -89,15 +72,19 @@ const { $toast } = useNuxtApp()
 const config = useRuntimeConfig()
 const appName = computed(() => config.public.appName as string)
 
+definePageMeta({
+  middleware: 'guest',
+})
+
 useSeoMeta({
-  title: computed(() => `Criar conta — ${appName.value}`)
+  title: computed(() => `Criar conta — ${appName.value}`),
 })
 
 const state = reactive<Partial<RegisterSchema>>({
   name: undefined,
   email: undefined,
   password: undefined,
-  confirmPassword: undefined
+  confirmPassword: undefined,
 })
 
 const loading = ref(false)
@@ -109,18 +96,19 @@ async function onSubmit(event: FormSubmitEvent<RegisterSchema>) {
     await auth.register({
       name: event.data.name,
       email: event.data.email,
-      password: event.data.password
+      password: event.data.password,
     })
     const rawRedirect = route.query.redirect
-    const redirect = typeof rawRedirect === 'string' && rawRedirect.startsWith('/') && !rawRedirect.startsWith('//')
-      ? rawRedirect
-      : '/'
+    const redirect =
+      typeof rawRedirect === 'string' && rawRedirect.startsWith('/') && !rawRedirect.startsWith('//')
+        ? rawRedirect
+        : '/'
     await navigateTo(redirect)
   } catch (error: unknown) {
     $toast.add({
       title: 'Falha no cadastro',
       description: getFetchErrorMessage(error),
-      color: 'error'
+      color: 'error',
     })
   } finally {
     loading.value = false

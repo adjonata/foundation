@@ -27,6 +27,6 @@ export function toHttpError(error: unknown) {
   return createError({
     statusCode: appError.statusCode,
     statusMessage: appError.message,
-    data: { code: appError.code }
-  })
+    data: { code: appError.code },
+  } as ApiLikeError)
 }

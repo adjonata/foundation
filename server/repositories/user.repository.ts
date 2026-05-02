@@ -19,7 +19,7 @@ export const userRepository = {
 
   listAll() {
     return prisma.user.findMany({
-      orderBy: { id: 'asc' }
+      orderBy: { id: 'asc' },
     })
   },
 
@@ -29,8 +29,8 @@ export const userRepository = {
         name: input.name,
         email: input.email,
         passwordHash: input.passwordHash,
-        role: input.role ?? Role.USER
-      }
+        role: input.role ?? Role.USER,
+      },
     })
-  }
+  },
 }

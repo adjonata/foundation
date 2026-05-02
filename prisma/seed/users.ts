@@ -15,8 +15,8 @@ export async function seedUsers(prisma: PrismaClient) {
       name: 'Super Admin',
       email: 'admin@starter.dev',
       passwordHash,
-      role: Role.SUPER_ADMIN
-    }
+      role: Role.SUPER_ADMIN,
+    },
   })
 
   const user = await prisma.user.upsert({
@@ -26,8 +26,8 @@ export async function seedUsers(prisma: PrismaClient) {
       name: 'Usuário',
       email: 'user@starter.dev',
       passwordHash,
-      role: Role.USER
-    }
+      role: Role.USER,
+    },
   })
 
   return { superAdmin, user }

@@ -16,25 +16,25 @@ function refreshExpiryDate() {
   return new Date(now + refreshTokenTtl() * 1000)
 }
 
-function sanitizeUser(user: { id: number, email: string, name: string | null, role: string }): AuthUser {
+function sanitizeUser(user: { id: number; email: string; name: string | null; role: string }): AuthUser {
   return {
     id: user.id,
     email: user.email,
     name: user.name,
-    role: user.role
+    role: user.role,
   }
 }
 
-async function issueTokenPair(user: { id: number, role: string }) {
+async function issueTokenPair(user: { id: number; role: string }) {
   const draftPayload = {
     sub: String(user.id),
-    role: user.role
+    role: user.role,
   }
 
   const session = await authRepository.createSession({
     userId: user.id,
     refreshTokenHash: hashRefreshToken('pending'),
-    expiresAt: refreshExpiryDate()
+    expiresAt: refreshExpiryDate(),
   })
 
   const sessionId = String(session.id)
@@ -58,14 +58,14 @@ export const authService = {
     const user = await userRepository.create({
       name: input.name,
       email: input.email,
-      passwordHash
+      passwordHash,
     })
 
     const tokens = await issueTokenPair(user)
 
     return {
       user: sanitizeUser(user),
-      ...tokens
+      ...tokens,
     }
   },
 
@@ -84,7 +84,7 @@ export const authService = {
 
     return {
       user: sanitizeUser(user),
-      ...tokens
+      ...tokens,
     }
   },
 
@@ -123,7 +123,7 @@ export const authService = {
 
     return {
       user: sanitizeUser(user),
-      ...tokens
+      ...tokens,
     }
   },
 
@@ -170,5 +170,5 @@ export const authService = {
     }
 
     return sanitizeUser(user)
-  }
+  },
 }

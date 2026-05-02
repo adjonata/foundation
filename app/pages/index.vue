@@ -5,6 +5,7 @@
     <div class="flex gap-2">
       <UButton label="Login" to="/entrar" color="primary" />
       <UButton label="Cadastro" to="/cadastrar" variant="outline" />
+      <UButton label="Área autenticada (teste)" to="/teste-auth" variant="soft" />
     </div>
   </div>
 </template>
