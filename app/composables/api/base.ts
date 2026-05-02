@@ -6,6 +6,10 @@ type ApiOptionsWithDefaults = ApiOptions & {
   credentials: 'include'
 }
 
+type ExecuteOptions = {
+  retryOn401?: boolean
+}
+
 export function useApiBase() {
   let refreshInFlight: Promise<void> | null = null
 
@@ -69,11 +73,13 @@ export function useApiBase() {
   }
 
   // Normaliza erros e tenta refresh automatico em respostas 401.
-  async function execute<T>(request: () => Promise<T>): Promise<T> {
+  async function execute<T>(request: () => Promise<T>, options?: ExecuteOptions): Promise<T> {
+    const retryOn401 = options?.retryOn401 ?? true
+
     try {
       return await request()
     } catch (error) {
-      if (getStatusCode(error) === 401) {
+      if (retryOn401 && getStatusCode(error) === 401) {
         try {
           await refreshSession()
           return await request()

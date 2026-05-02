@@ -13,7 +13,7 @@
               v-model="state.email"
               type="email"
               placeholder="voce@exemplo.com"
-              autocomplete="email"
+              autocomplete="username"
               class="w-full"
             />
           </UFormField>
@@ -55,6 +55,10 @@ const auth = useAuthStore()
 const { $toast } = useNuxtApp()
 const config = useRuntimeConfig()
 const appName = computed(() => config.public.appName as string)
+
+definePageMeta({
+  middleware: 'guest',
+})
 
 useSeoMeta({
   title: computed(() => `Entrar — ${appName.value}`),

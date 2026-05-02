@@ -21,7 +21,9 @@ export function useAuthApi() {
   }
 
   function login(body: LoginPayload): Promise<AuthUser> {
-    return execute(() => $fetch<AuthUser>('/api/auth/login', withDefaults({ method: 'post', body })))
+    return execute(() => $fetch<AuthUser>('/api/auth/login', withDefaults({ method: 'post', body })), {
+      retryOn401: false,
+    })
   }
 
   function register(body: RegisterPayload): Promise<AuthUser> {

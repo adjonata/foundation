@@ -16,7 +16,7 @@ Base no servidor já existente: login, register, logout, refresh (`/api/auth/*`)
 - [x] Cabeçalhos de cache reutilizáveis (`server/utils/cacheHeaders.ts`): `setPrivateNoStoreHeaders`, `setNoStoreHeaders`, `setPublicCacheHeaders`, `setVaryHeaders`, etc.
 - [x] Middleware global `server/middleware/00.api-cache.ts` — aplica `private, no-store` a todas as rotas `/api/*` sem editar cada handler; prefixos em `API_CACHE_OPT_OUT_PREFIXES` para rotas públicas cacheáveis (definir nesses handlers `setPublicCacheHeaders` / SWR, etc.)
 
-### Front — em curso
+### Front — concluído
 
 Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (registo). Redirecionamento de URLs antigas: `/auth/login` → `/entrar`, `/auth/register` → `/cadastrar` (`nuxt.config` `routeRules`).
 
@@ -26,9 +26,10 @@ Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (regist
 - [x] Composable `useApi` com módulos por seção da API (inicial: `auth`) e tratamento de erro padrão em camada única
 - [x] Interceptor automático de refresh: ao receber `401`, chamar `/api/auth/refresh` e repetir a requisição
 - [x] Páginas `app/pages/entrar.vue` e `app/pages/cadastrar.vue` integradas com a store, redirect pós-sucesso e query `redirect` segura
-- [ ] Route middleware `auth.ts` — redirecionar para `/entrar` se não autenticado
-- [ ] Route middleware `guest.ts` — redirecionar para `/` se já autenticado
-- [ ] Botão de logout no header com `authStore.logout()`
+- [x] Route middleware `auth.ts` — redirecionar para `/entrar` se não autenticado
+- [x] Página autenticada de teste `app/pages/teste-auth.vue` com middleware `auth` para validar login e exibir dados da sessão
+- [x] Route middleware `guest.ts` — redirecionar para `/` se já autenticado
+- [x] Botão de logout no header com `authStore.logout()`
 - [x] `runtimeConfig.public.appName` + `useSeoMeta` em `entrar` / `cadastrar` e `app.vue`
 
 ---
