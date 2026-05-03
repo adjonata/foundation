@@ -1,3 +1,10 @@
+<script setup lang="ts">
+import { isAdminPanelRole } from '#shared/constants/rbac'
+
+const authStore = useAuthStore()
+const showAdminCta = computed(() => authStore.isAuthenticated && isAdminPanelRole(authStore.role))
+</script>
+
 <template>
   <section aria-labelledby="sec-rbac-heading">
     <OrganismsHomeDemoSectionHeading
@@ -16,6 +23,11 @@
         Documentação detalhada no repositório:
         <code class="rounded bg-elevated px-1.5 py-0.5 text-xs">docs/RBAC.md</code>
       </p>
+      <div v-if="showAdminCta" class="mt-6">
+        <UButton to="/admin" color="primary" variant="soft" trailing-icon="i-lucide-arrow-right">
+          Abrir painel admin (permissões e papéis)
+        </UButton>
+      </div>
     </UCard>
   </section>
 </template>

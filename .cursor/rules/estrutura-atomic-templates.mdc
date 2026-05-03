@@ -26,7 +26,7 @@ Criar **sempre** novos componentes UI na pasta correta (nunca acumular blocos gr
 | ----- | --- |
 | `atoms/` | Unidades minimas (ex.: `app-logo/index.vue`) |
 | `molecules/` | Composicoes pequenas (agrupar em pasta com `index.vue` quando fizer sentido) |
-| `organisms/` | Blocos completos (ex.: `header/index.vue`). Varias vistas da **mesma area** ficam na **mesma pasta** (ex.: `organisms/home-demo/hero.vue`, `auth.vue`, `section-heading.vue`). |
+| `organisms/` | Blocos completos (ex.: `header/index.vue`). Varias vistas da **mesma area** ficam na **mesma pasta** (ex.: `home-demo/hero.vue`, `admin/permissions-table.vue`). |
 | `templates/` | Conteudo de rota: ficheiros `*-template.vue` (ex.: `cadastrar-template.vue`) |
 
 ## Páginas `app/pages/`
