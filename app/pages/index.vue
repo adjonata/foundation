@@ -1,11 +1,13 @@
 <template>
-  <div class="flex flex-col items-center justify-center min-h-screen gap-4">
-    <h1 class="text-3xl font-bold">foundation</h1>
-    <p class="text-neutral-500">Template base com autenticação, RBAC e painel admin.</p>
-    <div class="flex gap-2">
-      <UButton label="Login" to="/entrar" color="primary" />
-      <UButton label="Cadastro" to="/cadastrar" variant="outline" />
-      <UButton label="Área autenticada (teste)" to="/teste-auth" variant="soft" />
-    </div>
-  </div>
+  <TemplatesHomeTemplate />
 </template>
+
+<script setup lang="ts">
+const config = useRuntimeConfig()
+const appName = computed(() => config.public.appName as string)
+
+useSeoMeta({
+  title: computed(() => `${appName.value} — demonstração do template`),
+  description: 'Visão geral das funcionalidades: autenticação, sessão, RBAC no servidor e stack Nuxt 4 com Nuxt UI.',
+})
+</script>

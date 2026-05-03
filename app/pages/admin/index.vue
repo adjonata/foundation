@@ -1,5 +1,5 @@
 <template>
-  <TemplatesEntrarTemplate />
+  <TemplatesAdminIndexTemplate />
 </template>
 
 <script setup lang="ts">
@@ -7,10 +7,11 @@ const config = useRuntimeConfig()
 const appName = computed(() => config.public.appName as string)
 
 definePageMeta({
-  middleware: 'guest',
+  middleware: ['auth', 'admin']
 })
 
 useSeoMeta({
-  title: computed(() => `Entrar — ${appName.value}`),
+  title: computed(() => `Admin — ${appName.value}`),
+  description: 'Permissões e papéis do sistema (catálogo RBAC).'
 })
 </script>

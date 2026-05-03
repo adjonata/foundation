@@ -9,11 +9,16 @@ export default defineNuxtConfig({
     '#shared': resolve(rootDir, 'shared'),
   },
 
-  modules: ['@nuxt/eslint', '@nuxt/ui', '@pinia/nuxt'],
+  colorMode: {
+    preference: 'light',
+    fallback: 'light',
+  },
+
+  modules: ['@nuxt/eslint', '@nuxt/ui', '@pinia/nuxt', '@nuxt/icon'],
 
   runtimeConfig: {
     public: {
-      appName: 'foundation',
+      appName: 'Foundation',
     },
   },
 
@@ -25,7 +30,7 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      link: [{ rel: 'icon', type: 'image/svg+xml', href: '/icon.svg' }],
+      link: [{ rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
     },
   },
 

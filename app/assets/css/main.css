@@ -1,18 +1,95 @@
 @import 'tailwindcss';
 @import '@nuxt/ui';
 
+/* Alinha dark: ao class toggling do @nuxtjs/color-mode no <html> */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Paleta editorial: neutros quentes + vinho (#7A2E2E) como primário + acentos terrosos */
 @theme static {
   --font-sans: 'Public Sans', sans-serif;
 
-  --color-green-50: #effdf5;
-  --color-green-100: #d9fbe8;
-  --color-green-200: #b3f5d1;
-  --color-green-300: #75edae;
-  --color-green-400: #00dc82;
-  --color-green-500: #00c16a;
-  --color-green-600: #00a155;
-  --color-green-700: #007f45;
-  --color-green-800: #016538;
-  --color-green-900: #0a5331;
-  --color-green-950: #052e16;
+  /* Tokens semânticos úteis (além das escalas) */
+  --color-surface: #f2f2f0;
+  --color-ink: #0d0d0d;
+
+  /* Neutros base — texto, bordas, fundos (semantic: neutral) */
+  --color-editorial-50: #f9f9f7;
+  --color-editorial-100: #f2f2f0;
+  --color-editorial-200: #e6e6e2;
+  --color-editorial-300: #d6d6d2;
+  --color-editorial-400: #babab4;
+  --color-editorial-500: #9a9a9a;
+  --color-editorial-600: #6b6b6b;
+  --color-editorial-700: #4a4a4a;
+  --color-editorial-800: #3a3a3a;
+  --color-editorial-900: #2f2f2f;
+  --color-editorial-950: #0d0d0d;
+
+  /* Primário — vinho escuro */
+  --color-wine-50: #fbf7f6;
+  --color-wine-100: #f3e8e6;
+  --color-wine-200: #e8d0ce;
+  --color-wine-300: #d4a8a4;
+  --color-wine-400: #bc7a76;
+  --color-wine-500: #9e4e4a;
+  --color-wine-600: #7a2e2e;
+  --color-wine-700: #682828;
+  --color-wine-800: #561f1f;
+  --color-wine-900: #451c1c;
+  --color-wine-950: #2a0f0f;
+
+  /* Secundário — laranja queimado */
+  --color-ember-50: #fdf8f3;
+  --color-ember-100: #faeee3;
+  --color-ember-200: #f5dbc8;
+  --color-ember-300: #edc09e;
+  --color-ember-400: #e39b6b;
+  --color-ember-500: #c86a3a;
+  --color-ember-600: #a8552e;
+  --color-ember-700: #8c4526;
+  --color-ember-800: #733a22;
+  --color-ember-900: #5f331e;
+  --color-ember-950: #351a0e;
+
+  /* Erro / destrutivo — vermelho queimado */
+  --color-rust-50: #fcf5f4;
+  --color-rust-100: #f8e8e5;
+  --color-rust-200: #efd0cb;
+  --color-rust-300: #e2aba1;
+  --color-rust-400: #ca6f62;
+  --color-rust-500: #a44b3f;
+  --color-rust-600: #8e3f36;
+  --color-rust-700: #76352e;
+  --color-rust-800: #612e29;
+  --color-rust-900: #522a27;
+  --color-rust-950: #2c1310;
+
+  /* Tons orgânicos / ilustração — bege, areia, marrons */
+  --color-sand-50: #faf8f5;
+  --color-sand-100: #f3ede5;
+  --color-sand-200: #e8ddd0;
+  --color-sand-300: #d8c9b5;
+  --color-sand-400: #c9b8a3;
+  --color-sand-500: #bfa78c;
+  --color-sand-600: #9a8570;
+  --color-sand-700: #8a6f5a;
+  --color-sand-800: #6e5a4a;
+  --color-sand-900: #5e4638;
+  --color-sand-950: #36261e;
+}
+
+:root {
+  --ui-bg: white;
+  --ui-bg-muted: var(--ui-color-neutral-50);
+  --ui-bg-elevated: var(--ui-color-neutral-100);
+  --ui-bg-accented: var(--ui-color-neutral-200);
+  --ui-bg-inverted: var(--ui-color-neutral-900);
+}
+
+.dark {
+  --ui-bg: var(--ui-color-neutral-900);
+  --ui-bg-muted: var(--ui-color-neutral-800);
+  --ui-bg-elevated: var(--ui-color-neutral-800);
+  --ui-bg-accented: var(--ui-color-neutral-700);
+  --ui-bg-inverted: white;
 }
