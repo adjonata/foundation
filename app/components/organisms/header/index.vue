@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { DropdownMenuItem } from '@nuxt/ui'
 import { isAdminPanelRole } from '#shared/constants/rbac'
+import { getRoleDisplayLabel } from '#shared/utils/roleDisplay'
 
 const config = useRuntimeConfig()
 const appName = config.public.appName as string
@@ -8,16 +9,7 @@ const authStore = useAuthStore()
 
 const showAdminLink = computed(() => authStore.isAuthenticated && isAdminPanelRole(authStore.role))
 
-/** Rótulo curto do papel para o cabeçalho e menus. */
-const roleLabel = computed(() => {
-  const r = authStore.role
-  const map: Record<string, string> = {
-    SUPER_ADMIN: 'Super administrador',
-    ADMIN: 'Administrador',
-    USER: 'Utilizador',
-  }
-  return r ? (map[r] ?? r) : ''
-})
+const roleLabel = computed(() => getRoleDisplayLabel(authStore.role))
 
 const userMenuItems = computed<DropdownMenuItem[][]>(() => {
   const u = authStore.user

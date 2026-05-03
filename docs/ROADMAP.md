@@ -49,8 +49,8 @@ Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (regist
 
 ### Front
 
-- [ ] Página `/admin/roles` — listagem de roles com suas permissões
-- [ ] Componente de badge de role reutilizável
+- [x] Página `/admin/roles` — listagem de roles com suas permissões
+- [x] Componente de badge de role reutilizável
 
 ---
 
