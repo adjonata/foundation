@@ -2,15 +2,6 @@
 const config = useRuntimeConfig()
 const appName = config.public.appName as string
 const authStore = useAuthStore()
-const colorMode = useColorMode()
-
-const isDark = computed(() => colorMode.value === 'dark')
-const logoSrc = computed(() => (isDark.value ? '/logo-white.svg' : '/logo.svg'))
-const headerClass = computed(() =>
-  isDark.value
-    ? 'border-b border-editorial-800 bg-editorial-950 text-editorial-100'
-    : 'border-b border-editorial-200 bg-editorial-50 text-editorial-950',
-)
 
 async function handleLogout() {
   await authStore.logout()
@@ -19,10 +10,13 @@ async function handleLogout() {
 </script>
 
 <template>
-  <header :class="headerClass">
+  <header
+    class="border-b border-editorial-200 bg-editorial-50 text-editorial-950 dark:border-editorial-800 dark:bg-editorial-950 dark:text-editorial-100"
+  >
     <div class="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-4">
       <NuxtLink to="/" class="inline-flex items-center hover:opacity-80" :aria-label="`Voltar para ${appName}`">
-        <img :src="logoSrc" :alt="appName" class="h-7 w-auto" />
+        <img src="/logo.svg" :alt="appName" class="h-[42px] w-auto dark:hidden" />
+        <img src="/logo-white.svg" :alt="appName" class="hidden h-[42px] w-auto dark:block" />
       </NuxtLink>
 
       <div class="flex items-center gap-2">

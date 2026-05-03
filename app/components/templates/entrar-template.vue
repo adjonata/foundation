@@ -34,7 +34,7 @@
             <UButton variant="link" size="sm" class="h-auto p-0" disabled> Esqueci minha senha </UButton>
           </div>
 
-          <UButton type="submit" class="w-full" :loading="loading"> Entrar </UButton>
+          <UButton type="submit" class="w-full text-center justify-center" :loading="loading"> Entrar </UButton>
         </UForm>
       </UCard>
 
@@ -54,9 +54,10 @@ const route = useRoute()
 const auth = useAuthStore()
 const { $toast } = useNuxtApp()
 
+// Em dev, alinha ao seed em prisma/seed/users.ts (mesma senha Argon2 do `prisma:seed`)
 const state = reactive<Partial<LoginSchema>>({
-  email: undefined,
-  password: undefined,
+  email: import.meta.dev ? 'admin@starter.dev' : undefined,
+  password: import.meta.dev ? '123456' : undefined,
 })
 
 const loading = ref(false)

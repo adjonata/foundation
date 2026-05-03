@@ -14,9 +14,9 @@ alwaysApply: true
 
 - **Ficheiros** em `minúsculas` com palavras separadas por **hifen** (`kebab-case`): `entrar-template.vue`, `app-logo`.
 - **Pastas** em `kebab-case`. Preferir **uma pasta por bloco** com `index.vue` em vez de um único ficheiro com prefixo duplicado na camada.
-  - Organismo cabecalho: `components/organisms/header/index.vue` (auto-import: `OrganismsHeader`).
-  - Atomo logo: `components/atoms/app-logo/index.vue` (auto-import: `AtomsAppLogo`).
-- Nos templates Vue, usar tags em **kebab-case** alinhadas ao auto-import (ex.: `<organisms-header />`, `<templates-entrar-template />`).
+  - Organismo cabecalho: `components/organisms/header/index.vue` (auto-import: `<OrganismsHeader />`).
+  - Atomo logo: `components/atoms/app-logo/index.vue` (auto-import: `<AtomsAppLogo />`).
+- No `<template>`, componentes auto-importados em **PascalCase** (ex.: `<OrganismsHeader />`, `<TemplatesEntrarTemplate />`).
 
 ## Atomic design em `app/components/`
 
@@ -26,7 +26,7 @@ Criar **sempre** novos componentes UI na pasta correta (nunca acumular blocos gr
 | ----- | --- |
 | `atoms/` | Unidades minimas (ex.: `app-logo/index.vue`) |
 | `molecules/` | Composicoes pequenas (agrupar em pasta com `index.vue` quando fizer sentido) |
-| `organisms/` | Blocos completos (ex.: `header/index.vue`) |
+| `organisms/` | Blocos completos (ex.: `header/index.vue`). Varias vistas da **mesma area** ficam na **mesma pasta** (ex.: `organisms/home-demo/hero.vue`, `auth.vue`, `section-heading.vue`). |
 | `templates/` | Conteudo de rota: ficheiros `*-template.vue` (ex.: `cadastrar-template.vue`) |
 
 ## Páginas `app/pages/`
@@ -35,6 +35,16 @@ Criar **sempre** novos componentes UI na pasta correta (nunca acumular blocos gr
 - Corpo minimo: `definePageMeta`, `useSeoMeta` / `useHead` da rota, e um único componente em `templates/`.
 - Toda a marcação e logica de UI da rota em `app/components/templates/<nome>-template.vue`.
 
+## Página inicial (`/`)
+
+- A rota raiz é a **vitrine funcional** do template: texto em português, secções claras (auth, sessão, RBAC, stack) e
+  CTAs para rotas reais. Evitar a home como simples lista de links sem contexto.
+
 ## Imports
 
-- Preferir auto-import do Nuxt; nomes PascalCase gerados pelo Nuxt podem ser usados em script, mas no **template** preferir **kebab-case** consistente com a convencao acima.
+- Preferir **auto-import** do Nuxt; em `<template>` usar **PascalCase** no nome da tag; em `<script>` pode usar o mesmo nome ao importar explicitamente.
+
+## Ícones (`@nuxt/icon`)
+
+- Usar o componente **`<Icon />`** (auto-import do modulo `@nuxt/icon`) com a prop **`name`** (ex.: `lucide:key-round` ou `i-lucide-key-round` alinhado ao Iconify / colecoes instaladas).
+- Evitar ícones só por classes Tailwind (`class="i-lucide-..."`) em componentes novos; preferir `<Icon name="..." />` para consistência e SSR.

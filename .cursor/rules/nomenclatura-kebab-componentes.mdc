@@ -1,13 +1,22 @@
 ---
-description: Convencao de nomes kebab-case para componentes Vue e pastas em app/components
+description: Nomes de ficheiros/pastas em kebab-case; tags de componentes auto-importados em PascalCase
 alwaysApply: true
 ---
 
-# Nomenclatura kebab-case (componentes Vue)
+# Nomenclatura de componentes Vue
 
-- **Nunca** usar `PascalCase` ou `camelCase` no **nome do ficheiro** nem no nome da **pasta** sob `app/components/`.
-- Separador: **hifen** (`-`). Ex.: `teste-auth-template.vue`, pasta `app-logo/`.
-- Quando um componente tiver uma unica entrada, preferir `pasta-descritiva/index.vue` a `PastaGrande.vue` na raiz da camada atomica.
-- Em `<template>`, referenciar componentes auto-importados em **kebab-case** (ex.: `<atoms-app-logo />`).
+## Ficheiros e pastas (`app/components/`)
+
+- **Nunca** usar `PascalCase` no **nome do ficheiro** nem no nome da **pasta**.
+- Usar **minúsculas** com **hífen** (`kebab-case`): `teste-auth-template.vue`, pasta `app-logo/`, `home-demo/hero.vue`.
+- Quando um bloco tiver uma única entrada, preferir `pasta-descritiva/index.vue` à raiz da camada atómica.
+
+## Tags no `<template>` (auto-import Nuxt)
+
+- Referenciar componentes auto-importados em **PascalCase**, alinhado ao nome gerado pelo Nuxt (ex.:
+  `<OrganismsHomeDemoAuth />`, `<TemplatesEntrarTemplate />`, `<OrganismsHeader />`).
+- Atributos de props continuam em **kebab-case** no template quando aplicável (ex.: `:is-authenticated`, `:app-name`).
+
+Ícones vectoriais: ver secção **@nuxt/icon** em `estrutura-atomic-templates.mdc` (`<Icon name="..." />`).
 
 Esta regra complementa `estrutura-atomic-templates.mdc`.

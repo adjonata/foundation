@@ -1,5 +1,5 @@
 <template>
-  <templates-teste-auth-template />
+  <TemplatesTesteAuthTemplate />
 </template>
 
 <script setup lang="ts">

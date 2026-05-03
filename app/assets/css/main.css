@@ -1,6 +1,9 @@
 @import 'tailwindcss';
 @import '@nuxt/ui';
 
+/* Alinha dark: ao class toggling do @nuxtjs/color-mode no <html> */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Paleta editorial: neutros quentes + vinho (#7A2E2E) como primário + acentos terrosos */
 @theme static {
   --font-sans: 'Public Sans', sans-serif;
