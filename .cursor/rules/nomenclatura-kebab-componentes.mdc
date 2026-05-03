@@ -1,0 +1,13 @@
+---
+description: Convencao de nomes kebab-case para componentes Vue e pastas em app/components
+alwaysApply: true
+---
+
+# Nomenclatura kebab-case (componentes Vue)
+
+- **Nunca** usar `PascalCase` ou `camelCase` no **nome do ficheiro** nem no nome da **pasta** sob `app/components/`.
+- Separador: **hifen** (`-`). Ex.: `teste-auth-template.vue`, pasta `app-logo/`.
+- Quando um componente tiver uma unica entrada, preferir `pasta-descritiva/index.vue` a `PastaGrande.vue` na raiz da camada atomica.
+- Em `<template>`, referenciar componentes auto-importados em **kebab-case** (ex.: `<atoms-app-logo />`).
+
+Esta regra complementa `estrutura-atomic-templates.mdc`.

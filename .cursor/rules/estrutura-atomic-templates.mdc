@@ -1,0 +1,40 @@
+---
+description: Onde criar componentes Vue (atomic design), nomenclatura kebab-case e pages enxutas com templates
+alwaysApply: true
+---
+
+# Estrutura do app Vue (`app/`)
+
+## Layouts
+
+- Shell partilhado (cabecalho, `UMain`, etc.) em `app/layouts/` (ex.: `default.vue`).
+- `app/app.vue` mantem apenas `UApp`, `NuxtLayout`, `NuxtPage` e configuracoes globais (`useHead`, `useSeoMeta`, bootstrap de stores).
+
+## Nomenclatura de ficheiros e pastas
+
+- **Ficheiros** em `minúsculas` com palavras separadas por **hifen** (`kebab-case`): `entrar-template.vue`, `app-logo`.
+- **Pastas** em `kebab-case`. Preferir **uma pasta por bloco** com `index.vue` em vez de um único ficheiro com prefixo duplicado na camada.
+  - Organismo cabecalho: `components/organisms/header/index.vue` (auto-import: `OrganismsHeader`).
+  - Atomo logo: `components/atoms/app-logo/index.vue` (auto-import: `AtomsAppLogo`).
+- Nos templates Vue, usar tags em **kebab-case** alinhadas ao auto-import (ex.: `<organisms-header />`, `<templates-entrar-template />`).
+
+## Atomic design em `app/components/`
+
+Criar **sempre** novos componentes UI na pasta correta (nunca acumular blocos grandes em `pages/*.vue` nem em `app.vue`):
+
+| Pasta | Uso |
+| ----- | --- |
+| `atoms/` | Unidades minimas (ex.: `app-logo/index.vue`) |
+| `molecules/` | Composicoes pequenas (agrupar em pasta com `index.vue` quando fizer sentido) |
+| `organisms/` | Blocos completos (ex.: `header/index.vue`) |
+| `templates/` | Conteudo de rota: ficheiros `*-template.vue` (ex.: `cadastrar-template.vue`) |
+
+## Páginas `app/pages/`
+
+- Ficheiros em `pages/` em **kebab-case** quando multi-palavra (ex.: `teste-auth.vue`).
+- Corpo minimo: `definePageMeta`, `useSeoMeta` / `useHead` da rota, e um único componente em `templates/`.
+- Toda a marcação e logica de UI da rota em `app/components/templates/<nome>-template.vue`.
+
+## Imports
+
+- Preferir auto-import do Nuxt; nomes PascalCase gerados pelo Nuxt podem ser usados em script, mas no **template** preferir **kebab-case** consistente com a convencao acima.
