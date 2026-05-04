@@ -62,6 +62,51 @@ export const userRepository = {
     return { total, rows }
   },
 
+  /**
+   * Atualiza o papel de um utilizador no painel admin.
+   * Impede retirar o último `SUPER_ADMIN` do sistema.
+   */
+  async assignRoleById(
+    userId: number,
+    newRole: Role,
+  ): Promise<
+    | { success: true; row: AdminListedUserRow }
+    | { success: false; code: 'NOT_FOUND' }
+    | { success: false; code: 'LAST_SUPER_ADMIN' }
+  > {
+    return prisma.$transaction(async (tx) => {
+      const user = await tx.user.findUnique({
+        where: { id: userId },
+        select: { id: true, role: true },
+      })
+      if (!user) {
+        return { success: false as const, code: 'NOT_FOUND' as const }
+      }
+
+      if (user.role === newRole) {
+        const row = await tx.user.findUnique({
+          where: { id: userId },
+          select: adminListSelect,
+        })
+        return { success: true as const, row: row! }
+      }
+
+      if (user.role === Role.SUPER_ADMIN && newRole !== Role.SUPER_ADMIN) {
+        const superAdminCount = await tx.user.count({ where: { role: Role.SUPER_ADMIN } })
+        if (superAdminCount <= 1) {
+          return { success: false as const, code: 'LAST_SUPER_ADMIN' as const }
+        }
+      }
+
+      const row = await tx.user.update({
+        where: { id: userId },
+        data: { role: newRole },
+        select: adminListSelect,
+      })
+      return { success: true as const, row }
+    })
+  },
+
   create(input: CreateUserInput) {
     return prisma.user.create({
       data: {

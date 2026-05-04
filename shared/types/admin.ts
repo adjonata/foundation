@@ -12,10 +12,10 @@ export type AdminPermission = {
 /** Item de GET /api/protected/admin/roles */
 export type AdminRoleWithPermissions = {
   role: string
-  permissions: { name: string, description: string | null }[]
+  permissions: { name: string; description: string | null }[]
 }
 
-/** Utilizador listado no painel admin (sem credenciais). */
+/** Utilizador listado no painel admin (sem credenciais). Resposta de `PATCH .../users/:id/role`. */
 export type AdminUserListItem = {
   id: number
   email: string

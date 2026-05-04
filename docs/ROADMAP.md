@@ -59,7 +59,7 @@ Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (regist
 ### Back
 
 - [x] Rota `GET /api/protected/admin/users` — listagem com paginação e busca
-- [ ] Rota `PATCH /api/protected/admin/users/:id/role` — alterar role
+- [x] Rota `PATCH /api/protected/admin/users/:id/role` — alterar role
 - [ ] Rota `GET /api/protected/admin/sessions` — sessões ativas de todos os usuários
 - [ ] Rota `DELETE /api/protected/admin/sessions/:id` — revogar sessão
 - [ ] Proteção de todas as rotas `/api/protected/admin/*` para `SUPER_ADMIN`

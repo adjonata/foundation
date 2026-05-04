@@ -1,4 +1,10 @@
-import type { AdminPermission, AdminRoleWithPermissions, AdminUsersListResponse } from '#shared/types/admin'
+import type {
+  AdminPermission,
+  AdminRoleWithPermissions,
+  AdminUserListItem,
+  AdminUsersListResponse,
+} from '#shared/types/admin'
+import type { AdminUserRoleUpdateBody } from '#shared/schemas/admin-user-role.patch'
 import type { AdminUsersQuery } from '#shared/schemas/admin-users.query'
 import { useApiBase } from '../base'
 
@@ -24,9 +30,16 @@ export function useAdminApi() {
     )
   }
 
+  function updateUserRole(userId: number, body: AdminUserRoleUpdateBody): Promise<AdminUserListItem> {
+    return execute(() =>
+      $fetch<AdminUserListItem>(`/api/protected/admin/users/${userId}/role`, withDefaults({ method: 'patch', body })),
+    )
+  }
+
   return {
     listPermissions,
     listRolesWithPermissions,
     listUsers,
+    updateUserRole,
   }
 }
