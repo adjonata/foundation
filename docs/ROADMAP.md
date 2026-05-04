@@ -45,7 +45,7 @@ Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (regist
 - [x] Helper `hasPermission(role, permission)` em `server/utils/`
 - [x] Middleware de verificação de permissão por rota
 - [x] Seed com permissões padrão por role
-- [x] Rotas `GET /api/admin/permissions` e `GET /api/admin/roles`
+- [x] Rotas `GET /api/protected/admin/permissions` e `GET /api/protected/admin/roles`
 
 ### Front
 
@@ -58,11 +58,11 @@ Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (regist
 
 ### Back
 
-- [ ] Rota `GET /api/admin/users` — listagem com paginação e busca
-- [ ] Rota `PATCH /api/admin/users/:id/role` — alterar role
-- [ ] Rota `GET /api/admin/sessions` — sessões ativas de todos os usuários
-- [ ] Rota `DELETE /api/admin/sessions/:id` — revogar sessão
-- [ ] Proteção de todas as rotas `/api/admin/*` para `SUPER_ADMIN`
+- [x] Rota `GET /api/protected/admin/users` — listagem com paginação e busca
+- [x] Rota `PATCH /api/protected/admin/users/:id/role` — alterar role
+- [ ] Rota `GET /api/protected/admin/sessions` — sessões ativas de todos os usuários
+- [ ] Rota `DELETE /api/protected/admin/sessions/:id` — revogar sessão
+- [ ] Proteção de todas as rotas `/api/protected/admin/*` para `SUPER_ADMIN`
 
 ### Front
 
@@ -136,7 +136,7 @@ Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (regist
 - [ ] Migration
 - [ ] Helper `softDelete(model, id)` reutilizável
 - [ ] Filtro `where: { deletedAt: null }` automático nas queries dos repositories
-- [ ] Rota `DELETE /api/admin/users/:id` — soft delete de usuário
+- [ ] Rota `DELETE /api/protected/admin/users/:id` — soft delete de usuário
 
 ### Front
 
@@ -154,7 +154,7 @@ Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (regist
 - [ ] Migration
 - [ ] Helper `audit(event, action, entity, entityId, metadata?)` em `server/utils/`
 - [ ] Log automático nas ações críticas: login, logout, alteração de role, deleção, reset de senha
-- [ ] Rota `GET /api/admin/audit-logs` — listagem com filtros e paginação
+- [ ] Rota `GET /api/protected/admin/audit-logs` — listagem com filtros e paginação
 
 ### Front
 

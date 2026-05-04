@@ -2,7 +2,7 @@ import { createError } from 'h3'
 import { getAccessTokenFromCookie } from '../utils/cookies'
 import { verifyToken } from '../utils/jwt'
 
-/** Rotas em `server/api/protected/**` exigem sessao valida; ajuste o path se renomear a pasta. */
+/** Rotas em `server/api/protected/**` (inclui admin em `protected/admin`) exigem sessao valida; ajuste o path se renomear a pasta. */
 const PROTECTED_API_PREFIX = '/api/protected'
 
 export default defineEventHandler(async (event) => {

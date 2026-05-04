@@ -1,4 +1,4 @@
-import { createError } from 'h3'
+import { createError, H3Error } from 'h3'
 import { ZodError } from 'zod'
 
 export class AppError extends Error {
@@ -15,6 +15,11 @@ export class AppError extends Error {
 
 export function toAppError(error: unknown): AppError {
   if (error instanceof AppError) return error
+  if (error instanceof H3Error) {
+    const statusCode = typeof error.statusCode === 'number' ? error.statusCode : 500
+    const message = error.statusMessage || error.message || 'Erro na requisicao'
+    return new AppError('HTTP_ERROR', message, statusCode)
+  }
   if (error instanceof ZodError) {
     return new AppError('VALIDATION_ERROR', 'Dados invalidos', 422)
   }
@@ -23,6 +28,9 @@ export function toAppError(error: unknown): AppError {
 }
 
 export function toHttpError(error: unknown) {
+  if (error instanceof H3Error) {
+    return error
+  }
   const appError = toAppError(error)
   return createError({
     statusCode: appError.statusCode,
