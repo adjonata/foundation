@@ -9,20 +9,17 @@ O RBAC atual tem **duas camadas**:
 1. **Camada de autorização em código** (fonte de verdade para bloquear/liberar rota)
    - `server/utils/permissions.ts`
    - `server/utils/hasPermission.ts`
-   - `server/middleware/02.rbac.ts`
+   - `server/utils/requirePermission.ts` (chamado no início de cada handler em `server/api/protected/admin/**`)
 2. **Camada de catálogo no banco** (fonte de consulta para APIs administrativas)
    - Tabelas `Permission` e `RolePermission`
    - `server/repositories/permission.repository.ts`
-   - Rotas `GET /api/admin/permissions` e `GET /api/admin/roles`
+   - Rotas `GET /api/protected/admin/permissions` e `GET /api/protected/admin/roles`
 
 ## Como a autorização acontece hoje
 
-1. `server/middleware/01.auth.ts` hidrata `event.context.auth` com `userId`, `role` e `sessionId`.
-2. `server/middleware/02.rbac.ts` identifica rotas `/api/admin/*`.
-3. Para rotas mapeadas em `ROUTE_PERMISSIONS`, o middleware:
-   - resolve a permissão exigida
-   - chama `hasPermission(role, permission)`
-   - retorna `403` se o papel não possuir acesso
+1. `server/middleware/01.auth.ts` hidrata `event.context.auth` com `userId`, `role` e `sessionId` e exige sessão para qualquer rota em `/api/protected/*` (`401` sem autenticação).
+2. Cada rota em `server/api/protected/admin/**` chama `requirePermission(event, PERMISSIONS....)` no início do handler:
+   - sessão sem a permissão → `403` (via `hasPermission`)
 
 Importante: hoje o `hasPermission` usa o mapa `ROLE_PERMISSIONS` em código (não consulta banco em tempo real).
 
@@ -35,20 +32,21 @@ Checklist para criar uma nova permissão:
 1. Adicionar a chave em `PERMISSIONS` (`server/utils/permissions.ts`)
 2. Adicionar descrição em `PERMISSION_DEFINITIONS` (`server/utils/permissions.ts`)
 3. Vincular papéis em `ROLE_PERMISSIONS` (`server/utils/permissions.ts`)
-4. Mapear rota/permissão em `ROUTE_PERMISSIONS` (`server/middleware/02.rbac.ts`) quando necessário
+4. No handler da rota admin, chamar `requirePermission(event, PERMISSIONS.<sua_permissao>)`
 5. (Opcional, mas recomendado) expor essa capacidade em rota/admin UI
 
 ## Preciso rodar seed obrigatoriamente?
 
 Depende do objetivo:
 
-- **Para autorização funcionar no middleware:**  
-  Não é obrigatório, porque a decisão atual está em código (`hasPermission` + `ROLE_PERMISSIONS`).
+- **Para autorização nos handlers admin:**  
+  Não é obrigatório, porque a decisão atual está em código (`requirePermission` → `hasPermission` + `ROLE_PERMISSIONS`).
 
 - **Para o banco refletir o catálogo de permissões (e APIs admin retornarem dados corretos):**  
   Sim, é necessário rodar seed.
 
 Em resumo:
+
 - sem seed: autorização continua funcionando, mas `Permission`/`RolePermission` podem ficar vazias/desatualizadas
 - com seed: banco fica alinhado ao catálogo definido em código
 
@@ -73,4 +71,4 @@ Observações:
 
 ## Possível evolução (futuro)
 
-Se desejar que o banco seja a fonte de verdade da autorização, o middleware pode passar a consultar permissões persistidas por papel (com cache). Nesse cenário, seed/migração de dados passa a ser obrigatória para enforcement.
+Se desejar que o banco seja a fonte de verdade da autorização, `requirePermission` (ou um middleware dedicado) pode passar a consultar permissões persistidas por papel (com cache). Nesse cenário, seed/migração de dados passa a ser obrigatória para enforcement.

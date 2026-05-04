@@ -2,6 +2,8 @@
 defineProps<{
   appName: string
 }>()
+
+const { isAuthenticated } = useAuthStore()
 </script>
 
 <template>
@@ -16,7 +18,7 @@ defineProps<{
       Esta página resume o que o template já oferece: autenticação com sessão, rotas protegidas no cliente e autorização
       por papéis no servidor (RBAC). Use os botões abaixo para percorrer cada parte — com ou sem sessão iniciada.
     </p>
-    <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+    <div class="mt-8 flex flex-wrap items-center justify-center gap-3" v-if="!isAuthenticated">
       <UButton to="/entrar" color="primary" size="lg" icon="i-lucide-log-in" label="Entrar" />
       <UButton
         to="/cadastrar"

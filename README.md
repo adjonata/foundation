@@ -130,7 +130,7 @@ Toda requisição segue a cadeia: `rota → service → repository → banco`
 | `ADMIN`       | Acesso administrativo padrão |
 | `USER`        | Acesso de usuário comum      |
 
-Rotas sob `/api/admin/*` exigem `SUPER_ADMIN`.
+Rotas sob `/api/protected/admin/*` exigem sessão válida e permissões de painel admin (ver `docs/RBAC.md`).
 
 ---
 
