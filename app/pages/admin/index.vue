@@ -7,6 +7,7 @@ const config = useRuntimeConfig()
 const appName = computed(() => config.public.appName as string)
 
 definePageMeta({
+  layout: 'admin',
   middleware: ['auth', 'admin'],
 })
 

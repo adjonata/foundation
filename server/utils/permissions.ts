@@ -27,12 +27,7 @@ export const PERMISSION_DEFINITIONS: PermissionDefinition[] = [
 
 export const ROLE_PERMISSIONS: Record<Role, PermissionName[]> = {
   [Role.SUPER_ADMIN]: PERMISSION_DEFINITIONS.map((permission) => permission.name),
-  [Role.ADMIN]: [
-    PERMISSIONS.ADMIN_PERMISSIONS_READ,
-    PERMISSIONS.ADMIN_ROLES_READ,
-    PERMISSIONS.ADMIN_USERS_READ,
-    PERMISSIONS.ADMIN_USERS_ROLE_UPDATE,
-    PERMISSIONS.ADMIN_SESSIONS_READ,
-  ],
+  /** Rotas admin sao gated por middleware (apenas SUPER_ADMIN); mapa mantido explicitamente vazio. */
+  [Role.ADMIN]: [],
   [Role.USER]: [],
 }

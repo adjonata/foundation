@@ -1,9 +1,14 @@
 <template>
-  <div class="mx-auto w-full max-w-5xl px-4 py-8 md:py-10">
-    <OrganismsAdminIndexHeader />
-    <div class="space-y-8">
+  <UPage>
+    <UPageHeader
+      headline="Administração"
+      title="Permissões e papéis"
+      description="Leitura do catálogo RBAC no servidor. A autorização efetiva continua definida em código (ROLE_PERMISSIONS); esta vista reflete o que está na base após o seed."
+    />
+
+    <UPageBody class="space-y-8">
       <OrganismsAdminPermissionsFeature />
       <OrganismsAdminRolesFeature />
-    </div>
-  </div>
+    </UPageBody>
+  </UPage>
 </template>

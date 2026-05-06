@@ -1,0 +1,29 @@
+---
+description: Priorizar componentes prontos do Nuxt UI no app em vez de HTML cru ou estilos ad hoc
+alwaysApply: true
+---
+
+# Preferência por Nuxt UI (`@nuxt/ui`)
+
+## Princípio
+
+Ao criar ou alterar **UI em `app/`** (layouts, páginas, `components/`, templates), **usar ao máximo** os componentes do **[@nuxt/ui](https://ui.nuxt.com)** (auto-import, prefixo `U*`), em vez de reimplementar o mesmo padrão com elementos HTML genéricos + Tailwind quando existir equivalente documentado.
+
+## Fluxo recomendado
+
+1. Consultar [Componentes](https://ui.nuxt.com/docs/components) e exemplos oficiais antes de compor telas novas.
+2. Preferir **blocos de alto nível** quando encaixarem: por exemplo `UDashboardGroup` / `UDashboardSidebar` / `UDashboardPanel` / `UDashboardNavbar`; `UPage` / `UPageHeader` / `UPageBody`; `UNavigationMenu`; `UCard`; formulários com `UForm` e campos do módulo.
+3. Usar props de tema do módulo (`color`, `variant`, `size`, `ui`) para consistência, em vez de sobrescrever visual com classes utilitárias extensas na mesma peça.
+
+## Quando não houver componente adequado
+
+- Compor com **Nuxt UI** o mais próximo possível; usar HTML semântico mínimo e Tailwind só para lacunas pontuais.
+
+## Ícones
+
+- Seguir também `estrutura-atomic-templates.mdc`: onde o projeto já usa `<Icon />` (`@nuxt/icon`), manter esse padrão; nas **props `icon`** dos componentes Nuxt UI, usar os identificadores que o módulo aceita (ex.: `i-lucide-*`).
+
+## Exceções
+
+- Código **sem marcação Vue** (ex.: `server/`, `shared/`) não deve importar Nuxt UI.
+- Não substituir componentes Nuxt UI por wrappers vazios só para “padronizar nome”; preferir uso direto e composição clara.

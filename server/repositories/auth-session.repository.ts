@@ -43,4 +43,22 @@ export const authSessionRepository = {
 
     return { total, rows }
   },
+
+  /**
+   * Marca sessao como revogada. Idempotente se ja revogada; `null` se nao existir.
+   */
+  async revokeById(id: number): Promise<'NOT_FOUND' | 'REVOKED'> {
+    const row = await prisma.authSession.findUnique({
+      where: { id },
+      select: { id: true, revokedAt: true },
+    })
+    if (!row) return 'NOT_FOUND'
+    if (row.revokedAt) return 'REVOKED'
+
+    await prisma.authSession.update({
+      where: { id },
+      data: { revokedAt: new Date() },
+    })
+    return 'REVOKED'
+  },
 }
