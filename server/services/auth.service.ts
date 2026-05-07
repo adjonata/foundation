@@ -16,6 +16,18 @@ function refreshExpiryDate() {
   return new Date(now + refreshTokenTtl() * 1000)
 }
 
+async function handleRefreshTokenReuse(refreshToken: string) {
+  const providedHash = hashRefreshToken(refreshToken)
+  const session = await authRepository.findSessionByRefreshTokenHash(providedHash)
+  if (!session) {
+    throw new AppError('INVALID_TOKEN', 'Refresh token invalido', 401)
+  }
+
+  // Token já pertenceu a uma sessão (expirada ou revogada): tratar como reutilização.
+  await authRepository.revokeAllUserSessions(session.userId)
+  throw new AppError('REFRESH_TOKEN_REUSE', 'Reutilizacao de refresh token detectada', 401)
+}
+
 function sanitizeUser(user: { id: number; email: string; name: string | null; role: string }): AuthUser {
   return {
     id: user.id,
@@ -89,7 +101,16 @@ export const authService = {
   },
 
   async refresh(refreshToken: string) {
-    const payload = await verifyToken(refreshToken, 'refresh')
+    let payload: Awaited<ReturnType<typeof verifyToken>> | null = null
+    try {
+      payload = await verifyToken(refreshToken, 'refresh')
+    } catch {
+      await handleRefreshTokenReuse(refreshToken)
+    }
+    if (!payload) {
+      throw new AppError('INVALID_TOKEN', 'Token invalido ou expirado', 401)
+    }
+
     const sessionId = Number(payload.sessionId)
     if (!Number.isFinite(sessionId)) {
       throw new AppError('INVALID_TOKEN', 'Sessao invalida', 401)
@@ -103,12 +124,14 @@ export const authService = {
       throw new AppError('INVALID_TOKEN', 'Sessao revogada', 401)
     }
     if (session.expiresAt.getTime() < Date.now()) {
+      await authRepository.revokeAllUserSessions(session.userId)
       throw new AppError('INVALID_TOKEN', 'Sessao expirada', 401)
     }
 
     const providedHash = hashRefreshToken(refreshToken)
     if (providedHash !== session.refreshTokenHash) {
-      throw new AppError('INVALID_TOKEN', 'Refresh token invalido', 401)
+      await authRepository.revokeAllUserSessions(session.userId)
+      throw new AppError('REFRESH_TOKEN_REUSE', 'Reutilizacao de refresh token detectada', 401)
     }
 
     const userId = Number(payload.sub)

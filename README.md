@@ -84,22 +84,37 @@ Acesse em `http://localhost:3000`
 
 ## Endpoints da API
 
-### Autenticação
+### Autenticação (`/api/auth`)
 
-| Método | Rota                 | Descrição        |
-| ------ | -------------------- | ---------------- |
-| `POST` | `/api/auth/register` | Criar nova conta |
-| `POST` | `/api/auth/login`    | Entrar na conta  |
-| `POST` | `/api/auth/logout`   | Encerrar sessão  |
-| `POST` | `/api/auth/refresh`  | Renovar tokens   |
+| Método | Rota                 | Descrição                                                               |
+| ------ | -------------------- | ----------------------------------------------------------------------- |
+| `POST` | `/api/auth/register` | Criar nova conta e iniciar sessão                                       |
+| `POST` | `/api/auth/login`    | Entrar na conta e iniciar sessão                                        |
+| `POST` | `/api/auth/logout`   | Encerrar sessão atual (revoga refresh da sessão)                        |
+| `POST` | `/api/auth/refresh`  | Rotacionar tokens e sessão (com proteção contra reutilização)           |
+| `GET`  | `/api/auth/me`       | Retornar utilizador autenticado da sessão atual (sanitizado, sem senha) |
 
-### Utilitários
+> Os tokens são enviados automaticamente como cookies `HttpOnly`.
+> Em caso de reutilização de refresh token, todas as sessões ativas do utilizador são revogadas.
 
-| Método | Rota        | Descrição    |
-| ------ | ----------- | ------------ |
-| `GET`  | `/api/ping` | Health check |
+### Painel admin (`/api/protected/admin`)
 
-Os tokens são enviados automaticamente como cookies `HttpOnly`.
+Todas as rotas abaixo exigem sessão válida e permissão de admin no backend (`SUPER_ADMIN`).
+
+| Método   | Rota                                  | Descrição                                              |
+| -------- | ------------------------------------- | ------------------------------------------------------ |
+| `GET`    | `/api/protected/admin/permissions`    | Listar catálogo de permissões                          |
+| `GET`    | `/api/protected/admin/roles`          | Listar papéis e permissões associadas                  |
+| `GET`    | `/api/protected/admin/users`          | Listar utilizadores com paginação e busca (`pageSize`) |
+| `PATCH`  | `/api/protected/admin/users/:id/role` | Atualizar papel do utilizador                          |
+| `GET`    | `/api/protected/admin/sessions`       | Listar sessões ativas com paginação                    |
+| `DELETE` | `/api/protected/admin/sessions/:id`   | Revogar sessão específica                              |
+
+### Utilitário público
+
+| Método | Rota        | Descrição          |
+| ------ | ----------- | ------------------ |
+| `GET`  | `/api/ping` | Health check geral |
 
 ---
 
@@ -119,6 +134,60 @@ server/
 ```
 
 Toda requisição segue a cadeia: `rota → service → repository → banco`
+
+---
+
+## Como funciona o frontend
+
+### Estrutura de UI
+
+- `app/pages/*`: páginas finas (meta, SEO e middleware)
+- `app/components/templates/*`: conteúdo das rotas
+- `app/components/organisms/*`: blocos funcionais (admin, home, etc.)
+- `app/components/atoms/*`: peças reutilizáveis (`AtomsRoleBadge`, `AtomsTable`)
+
+### Estado de autenticação
+
+- store central em `app/stores/auth.ts`
+- estado principal: `user`, `isAuthenticated`, `role`, `sessionChecked`
+- ações: `login`, `register`, `logout`, `fetchMe`, `ensureSession`
+
+### Camada de API no frontend
+
+- `useApi()` é o ponto único para módulos (`auth`, `admin`)
+- `useApiBase()` aplica:
+  - `credentials: 'include'`
+  - reenvio de cookies no SSR
+  - normalização de erros
+  - interceptor de `401` com refresh automático
+
+### Fluxo de refresh no cliente
+
+Quando uma requisição retorna `401`:
+
+1. tenta `POST /api/auth/refresh`
+2. se funcionar, repete a requisição original
+3. se falhar, limpa sessão local, mostra toast de sessão expirada e redireciona para `/entrar` com `redirect` seguro
+
+### Middleware de rotas
+
+- `auth.ts`: bloqueia rotas privadas para anónimos
+- `guest.ts`: bloqueia rotas de login/cadastro para autenticados
+- `admin.ts`: redireciona para `/` quem não for `SUPER_ADMIN`
+
+### Listagens admin (tabela + paginação)
+
+- `usePaginated()` centraliza:
+  - estado de paginação
+  - loading/erro
+  - execução do request
+  - debounce de busca
+- `AtomsTable` centraliza:
+  - busca por `pagination.search`
+  - loading e empty state
+  - paginação (`UPagination`)
+  - coluna de ações por linha (dropdown)
+  - slots por coluna (`role-[key]`)
 
 ---
 
