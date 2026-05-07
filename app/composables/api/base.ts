@@ -12,6 +12,7 @@ type ExecuteOptions = {
 
 export function useApiBase() {
   let refreshInFlight: Promise<void> | null = null
+  let refreshFailureHandled = false
 
   // No SSR, reenviamos o cookie da request original para manter a sessao.
   const forwardedCookies = import.meta.server ? useRequestHeaders(['cookie']) : undefined
@@ -72,6 +73,33 @@ export function useApiBase() {
     }
   }
 
+  async function handleRefreshFailure(error: unknown) {
+    if (!import.meta.client || refreshFailureHandled) return
+    refreshFailureHandled = true
+
+    const authStore = useAuthStore()
+    authStore.clearSession()
+    authStore.sessionChecked = true
+
+    const nuxtApp = useNuxtApp()
+    nuxtApp.$toast.add({
+      title: 'Sessão expirada',
+      description: 'Faça login novamente para continuar.',
+      color: 'warning',
+    })
+
+    const route = useRoute()
+    const redirect =
+      typeof route.fullPath === 'string' && route.fullPath.startsWith('/') && !route.fullPath.startsWith('//')
+        ? route.fullPath
+        : '/'
+
+    await navigateTo({
+      path: '/entrar',
+      query: { redirect },
+    })
+  }
+
   // Normaliza erros e tenta refresh automatico em respostas 401.
   async function execute<T>(request: () => Promise<T>, options?: ExecuteOptions): Promise<T> {
     const retryOn401 = options?.retryOn401 ?? true
@@ -84,6 +112,7 @@ export function useApiBase() {
           await refreshSession()
           return await request()
         } catch (retryError) {
+          await handleRefreshFailure(retryError)
           throwNormalized(retryError)
         }
       }

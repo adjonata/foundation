@@ -6,6 +6,22 @@ Ordem de implementação dentro do back: `schema → migration → repository �
 
 ---
 
+## Prioridade Atual (próximas etapas)
+
+Com base no estado atual do projeto, priorizar nesta ordem:
+
+1. Verificação de e-mail
+2. Reset de senha
+3. Audit log
+4. Rate limiting
+
+Também adicionar em paralelo:
+
+- Testes automatizados (unit/integration/e2e)
+- Observabilidade (logs estruturados + monitoramento)
+
+---
+
 ## 0. Auth — Frontend
 
 Base no servidor já existente: login, register, logout, refresh (`/api/auth/*`), middleware Nitro de contexto (`server/middleware/01.auth.ts`), cookies HttpOnly.
@@ -76,14 +92,14 @@ Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (regist
 
 ### Back
 
-- [ ] Ao fazer refresh, revogar sessão antiga e emitir nova (já parcialmente implementado)
-- [ ] Detectar reutilização de refresh token expirado → revogar todas as sessões do usuário
+- [x] Ao fazer refresh, revogar sessão antiga e emitir nova
+- [x] Detectar reutilização de refresh token expirado → revogar todas as sessões do usuário
 - [x] Rota `GET /api/auth/me` — ver §0 (concluído)
 
 ### Front
 
-- [ ] Atualizar o interceptor de refresh (item 0) para lidar com reutilização de token detectada pelo back (revogar sessão local e redirecionar para login)
-- [ ] Exibir toast de "sessão expirada" quando refresh falha
+- [x] Atualizar o interceptor de refresh (item 0) para lidar com reutilização de token detectada pelo back (revogar sessão local e redirecionar para login)
+- [x] Exibir toast de "sessão expirada" quando refresh falha
 
 ---
 
@@ -166,16 +182,17 @@ Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (regist
 
 ### Back
 
-- [ ] Helper `paginate(model, where, page, perPage, orderBy?)` reutilizável
-- [ ] Schema Zod `paginationSchema` para validar `page` e `perPage`
-- [ ] Formato padronizado de resposta: `{ data, total, page, perPage, totalPages }`
+- [x] Schema Zod de paginação (`shared/schemas/pagination.ts`) para validar `page` e `pageSize`
+- [x] Helpers reutilizáveis de paginação (`shared/utils/pagination.ts`)
+- [x] Formato padronizado de resposta paginada via `PaginatedResult` (`items` + `meta`)
+- [ ] Helper `paginate(model, where, page, perPage, orderBy?)` totalmente genérico por model/repository
 - [ ] Aplicar em todas as rotas de listagem existentes
 
 ### Front
 
-- [ ] Composable `usePagination()` para gerenciar estado de página
-- [ ] Componente `AppPagination` reutilizável
-- [ ] Aplicar em todas as tabelas existentes no admin
+- [x] Composable genérico `usePaginated()` para estado, execução, loading/erro e debounce de busca
+- [x] Componente de tabela reutilizável `AtomsTable` com busca, paginação, loading/empty e ações por linha
+- [x] Aplicado nas tabelas do admin implementadas (`/admin`, `/admin/users`, `/admin/sessions`)
 
 ---
 
@@ -283,3 +300,35 @@ Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (regist
 - [ ] Arquivos de tradução `locales/pt-BR.json` e `locales/en-US.json`
 - [ ] Todas as strings de UI extraídas para os arquivos de tradução
 - [ ] Seletor de idioma no header
+
+---
+
+## 15. Testes Automatizados
+
+### Back
+
+- [ ] Setup de testes unitários para services e utils críticos
+- [ ] Testes de integração para rotas de auth e admin (`/api/auth/*`, `/api/protected/admin/*`)
+- [ ] Fixtures/seed de teste para cenários de permissão e sessão
+
+### Front
+
+- [ ] Testes de componentes para fluxos de auth e tabelas admin
+- [ ] Testes e2e dos fluxos principais (`entrar`, `/admin/users`, `/admin/sessions`)
+- [ ] Pipeline de CI com execução de testes + typecheck
+
+---
+
+## 16. Observabilidade
+
+### Back
+
+- [ ] Padronizar logs estruturados por request (id de correlação, rota, duração, status)
+- [ ] Captura centralizada de erros com contexto (utilizador/sessão quando houver)
+- [ ] Métricas básicas de API (latência, erros por rota, volume)
+
+### Front
+
+- [ ] Instrumentar erro de runtime e falhas de fetch com contexto mínimo
+- [ ] Painel básico para acompanhar falhas dos fluxos críticos (auth/admin)
+- [ ] Documentação operacional de diagnóstico rápido

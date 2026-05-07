@@ -19,6 +19,13 @@ export const authRepository = {
     })
   },
 
+  findSessionByRefreshTokenHash(refreshTokenHash: string) {
+    return prisma.authSession.findFirst({
+      where: { refreshTokenHash },
+      orderBy: { createdAt: 'desc' },
+    })
+  },
+
   revokeSession(id: number) {
     return prisma.authSession.update({
       where: { id },
