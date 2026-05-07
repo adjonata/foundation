@@ -1,5 +1,5 @@
 <template>
-  <TemplatesEntrarTemplate />
+  <TemplatesEntrar />
 </template>
 
 <script setup lang="ts">

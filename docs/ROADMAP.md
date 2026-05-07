@@ -27,7 +27,6 @@ Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (regist
 - [x] Interceptor automático de refresh: ao receber `401`, chamar `/api/auth/refresh` e repetir a requisição
 - [x] Páginas `app/pages/entrar.vue` e `app/pages/cadastrar.vue` integradas com a store, redirect pós-sucesso e query `redirect` segura
 - [x] Route middleware `auth.ts` — redirecionar para `/entrar` se não autenticado
-- [x] Página autenticada de teste `app/pages/teste-auth.vue` com middleware `auth` para validar login e exibir dados da sessão
 - [x] Route middleware `guest.ts` — redirecionar para `/` se já autenticado
 - [x] Botão de logout no header com `authStore.logout()`
 - [x] `runtimeConfig.public.appName` + `useSeoMeta` em `entrar` / `cadastrar` e `app.vue`
@@ -68,8 +67,8 @@ Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (regist
 
 - [x] Layout `/admin` com sidebar e navegação
 - [x] Página `/admin/users` — tabela com busca, paginação e ação de alterar role
-- [ ] Página `/admin/sessions` — tabela de sessões com ação de revogar
-- [ ] Guard de rota: redirecionar quem não for `SUPER_ADMIN` para `/`
+- [x] Página `/admin/sessions` — tabela de sessões com ação de revogar
+- [x] Guard de rota: redirecionar quem não for `SUPER_ADMIN` para `/`
 
 ---
 

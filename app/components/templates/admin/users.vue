@@ -6,7 +6,7 @@
       description="Listagem paginada na API; busca por texto em e-mail ou nome; alteração de papel através do menu de ações por linha."
     />
     <UPageBody>
-      <OrganismsAdminUsersFeature />
+      <OrganismsAdminUsers />
     </UPageBody>
   </UPage>
 </template>

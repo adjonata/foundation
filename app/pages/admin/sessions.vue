@@ -1,16 +1,5 @@
 <template>
-  <UPage>
-    <UPageHeader
-      headline="Sessões"
-      title="Sessões ativas"
-      description="Esta secção será preenchida com a listagem de sessões e revogação (ver roadmap)."
-    />
-    <UPageBody>
-      <UCard class="p-6">
-        <p class="text-sm text-muted">Em breve.</p>
-      </UCard>
-    </UPageBody>
-  </UPage>
+  <TemplatesAdminSessions />
 </template>
 
 <script setup lang="ts">

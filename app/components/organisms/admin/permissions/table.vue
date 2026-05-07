@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import type { TableColumn } from '@nuxt/ui'
 import type { AdminPermission } from '#shared/types/admin'
+import type { Pagination } from '~/composables/usePaginated'
 
 const props = defineProps<{
   rows: AdminPermission[]
   loading: boolean
 }>()
+
+const pagination = ref<Pagination>({
+  page: 1,
+  pageSize: 20,
+})
 
 function formatShortDate(iso: string) {
   try {
@@ -63,22 +69,6 @@ const columns = computed<TableColumn<AdminPermission>[]>(() => [
       </div>
     </template>
 
-    <div class="relative">
-      <UTable
-        :data="props.rows"
-        :columns="columns"
-        :loading="props.loading"
-        loading-color="primary"
-        sticky
-        class="min-w-full"
-      />
-
-      <div
-        v-if="!props.loading && props.rows.length === 0"
-        class="rounded-b-lg border-t border-default bg-elevated/40 px-4 py-10 text-center text-sm text-muted"
-      >
-        Nenhuma permissão na base ou catálogo ainda não populado pelo seed.
-      </div>
-    </div>
+    <AtomsTable v-model:pagination="pagination" :data="props.rows" :columns="columns" :loading="props.loading" />
   </UCard>
 </template>

@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import type { TableColumn } from '@nuxt/ui'
 import type { AdminRoleWithPermissions } from '#shared/types/admin'
+import type { Pagination } from '~/composables/usePaginated'
 
 const props = defineProps<{
   rows: AdminRoleWithPermissions[]
   loading: boolean
 }>()
+
+const pagination = ref<Pagination>({
+  page: 1,
+  pageSize: 20,
+})
 
 type FlatRow = {
   role: string
@@ -78,26 +84,10 @@ const columns = computed<TableColumn<FlatRow>[]>(() => [
       </div>
     </template>
 
-    <div class="relative">
-      <UTable
-        :data="tableData"
-        :columns="columns"
-        :loading="props.loading"
-        loading-color="primary"
-        sticky
-        class="min-w-full"
-      >
-        <template #role-cell="{ row }">
-          <AtomsRoleBadge :role="row.original.role" show-code />
-        </template>
-      </UTable>
-
-      <div
-        v-if="!props.loading && !tableData.length"
-        class="rounded-b-lg border-t border-default bg-elevated/40 px-4 py-10 text-center text-sm text-muted"
-      >
-        Nenhum papel com permissões no catálogo; volte após aplicar seed.
-      </div>
-    </div>
+    <AtomsTable v-model:pagination="pagination" :data="tableData" :columns="columns" :loading="props.loading">
+      <template #role-role="{ row }">
+        <AtomsRoleBadge :role="row.original.role" show-code />
+      </template>
+    </AtomsTable>
   </UCard>
 </template>

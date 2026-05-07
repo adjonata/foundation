@@ -7,8 +7,8 @@
     />
 
     <UPageBody class="space-y-8">
-      <OrganismsAdminPermissionsFeature />
-      <OrganismsAdminRolesFeature />
+      <OrganismsAdminPermissions />
+      <OrganismsAdminRoles />
     </UPageBody>
   </UPage>
 </template>

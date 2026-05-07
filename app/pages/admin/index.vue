@@ -1,5 +1,5 @@
 <template>
-  <TemplatesAdminIndexTemplate />
+  <TemplatesAdmin />
 </template>
 
 <script setup lang="ts">

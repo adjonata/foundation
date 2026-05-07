@@ -155,14 +155,15 @@ const visibleColumns = computed<any[]>(() => {
         </UDropdownMenu>
       </template>
 
-      <template #empty>
-        <div class="border-t border-default py-12 text-center text-sm text-muted">
-          <div v-if="loading" class="inline-flex items-center gap-2">
-            <Icon name="i-lucide-loader-circle" class="h-4 w-4 animate-spin" />
-            <span>A carregar dados...</span>
-          </div>
-          <span v-else>Nenhum resultado para os filtros atuais.</span>
+      <template #loading>
+        <div class="inline-flex items-center gap-2 text-sm text-muted">
+          <Icon name="i-lucide-loader-circle" class="h-4 w-4 animate-spin" />
+          <span>A carregar dados...</span>
         </div>
+      </template>
+
+      <template #empty>
+        <div v-if="!loading" class="text-center text-sm text-muted">Nenhum resultado para os filtros atuais.</div>
       </template>
     </UTable>
 

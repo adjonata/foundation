@@ -1,5 +1,5 @@
 <template>
-  <TemplatesCadastrarTemplate />
+  <TemplatesCadastrar />
 </template>
 
 <script setup lang="ts">
