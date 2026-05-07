@@ -1,5 +1,5 @@
 <template>
-  <TemplatesAdmin />
+  <TemplatesAdminUsers />
 </template>
 
 <script setup lang="ts">
@@ -12,7 +12,7 @@ definePageMeta({
 })
 
 useSeoMeta({
-  title: computed(() => `Admin — ${appName.value}`),
-  description: 'Permissões e papéis do sistema (catálogo RBAC).',
+  title: computed(() => `Admin — Utilizadores — ${appName.value}`),
+  description: 'Gestão de utilizadores no painel admin.',
 })
 </script>

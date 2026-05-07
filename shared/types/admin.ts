@@ -27,3 +27,21 @@ export type AdminUserListItem = {
 
 /** Resposta de GET /api/protected/admin/users */
 export type AdminUsersListResponse = PaginatedResult<AdminUserListItem>
+
+/** Sessao ativa listada no painel admin (sem tokens). */
+export type AdminSessionListItem = {
+  id: number
+  userId: number
+  expiresAt: string
+  revokedAt: string | null
+  createdAt: string
+  user: {
+    id: number
+    email: string
+    name: string | null
+    role: string
+  }
+}
+
+/** Resposta de GET /api/protected/admin/sessions */
+export type AdminSessionsListResponse = PaginatedResult<AdminSessionListItem>

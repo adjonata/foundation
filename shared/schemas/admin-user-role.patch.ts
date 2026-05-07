@@ -1,11 +1,9 @@
 import { z } from 'zod'
-
-/** Valores do enum `Role` no Prisma (evitar import de Prisma em `shared/`). */
-const roleValues = ['SUPER_ADMIN', 'ADMIN', 'USER'] as const
+import { prismaRoleSlugs } from '#shared/constants/prisma-roles'
 
 /** Body de `PATCH /api/protected/admin/users/:id/role`. */
 export const adminUserRoleUpdateBodySchema = z.object({
-  role: z.enum(roleValues),
+  role: z.enum(prismaRoleSlugs),
 })
 
 export type AdminUserRoleUpdateBody = z.infer<typeof adminUserRoleUpdateBodySchema>

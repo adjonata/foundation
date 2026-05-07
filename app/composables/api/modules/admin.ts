@@ -1,10 +1,13 @@
 import type {
   AdminPermission,
   AdminRoleWithPermissions,
+  AdminSessionListItem,
+  AdminSessionsListResponse,
   AdminUserListItem,
   AdminUsersListResponse,
 } from '#shared/types/admin'
 import type { AdminUserRoleUpdateBody } from '#shared/schemas/admin-user-role.patch'
+import type { AdminSessionsQuery } from '#shared/schemas/admin-sessions.query'
 import type { AdminUsersQuery } from '#shared/schemas/admin-users.query'
 import { useApiBase } from '../base'
 
@@ -36,10 +39,24 @@ export function useAdminApi() {
     )
   }
 
+  function listSessions(
+    query?: Partial<Pick<AdminSessionsQuery, 'page' | 'pageSize'>>,
+  ): Promise<AdminSessionsListResponse> {
+    return execute(() =>
+      $fetch<AdminSessionsListResponse>('/api/protected/admin/sessions', withDefaults({ method: 'get', query })),
+    )
+  }
+
+  function revokeSession(sessionId: number): Promise<void> {
+    return execute(() => $fetch<void>(`/api/protected/admin/sessions/${sessionId}`, withDefaults({ method: 'delete' })))
+  }
+
   return {
     listPermissions,
     listRolesWithPermissions,
     listUsers,
     updateUserRole,
+    listSessions,
+    revokeSession,
   }
 }
