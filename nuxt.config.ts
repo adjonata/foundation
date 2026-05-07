@@ -14,7 +14,7 @@ export default defineNuxtConfig({
     fallback: 'light',
   },
 
-  modules: ['@nuxt/eslint', '@nuxt/ui', '@pinia/nuxt', '@nuxt/icon'],
+  modules: ['@nuxt/eslint', '@nuxt/ui', '@pinia/nuxt', '@nuxt/icon', '@vueuse/nuxt'],
 
   runtimeConfig: {
     public: {

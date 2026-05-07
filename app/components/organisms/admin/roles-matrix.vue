@@ -1,10 +1,70 @@
 <script setup lang="ts">
+import type { TableColumn } from '@nuxt/ui'
 import type { AdminRoleWithPermissions } from '#shared/types/admin'
 
-defineProps<{
+const props = defineProps<{
   rows: AdminRoleWithPermissions[]
   loading: boolean
 }>()
+
+type FlatRow = {
+  role: string
+  permissionName: string
+  permissionDescription: string | null
+}
+
+const tableData = computed<FlatRow[]>(() => {
+  const out: FlatRow[] = []
+  for (const entry of props.rows) {
+    if (!entry.permissions.length) {
+      out.push({
+        role: entry.role,
+        permissionName: '—',
+        permissionDescription: null,
+      })
+      continue
+    }
+    for (const p of entry.permissions) {
+      out.push({
+        role: entry.role,
+        permissionName: p.name,
+        permissionDescription: p.description,
+      })
+    }
+  }
+  return out
+})
+
+const columns = computed<TableColumn<FlatRow>[]>(() => [
+  {
+    accessorKey: 'role',
+    header: 'Papel',
+    meta: {
+      class: {
+        td: 'align-top',
+      },
+    },
+  },
+  {
+    accessorKey: 'permissionName',
+    header: 'Permissão',
+    meta: {
+      class: {
+        td: 'align-top font-mono text-xs',
+      },
+    },
+  },
+  {
+    accessorKey: 'permissionDescription',
+    header: 'Descrição',
+    cell: ({ row }) => row.original.permissionDescription?.trim() || '—',
+    meta: {
+      class: {
+        td: 'align-top text-muted',
+      },
+    },
+  },
+])
 </script>
 
 <template>
@@ -12,31 +72,32 @@ defineProps<{
     <template #header>
       <div class="space-y-1">
         <h2 class="text-lg font-semibold text-highlighted">Papéis e permissões</h2>
-        <p class="text-sm text-muted">Vínculos <code class="text-xs">RolePermission</code> por papel.</p>
+        <p class="text-sm text-muted">
+          Vínculos <code class="text-xs">RolePermission</code> por papel (uma linha por permissão).
+        </p>
       </div>
     </template>
 
-    <div v-if="loading" class="flex justify-center py-10">
-      <Icon name="i-lucide-loader-circle" class="size-8 animate-spin text-muted" />
-    </div>
+    <div class="relative">
+      <UTable
+        :data="tableData"
+        :columns="columns"
+        :loading="props.loading"
+        loading-color="primary"
+        sticky
+        class="min-w-full"
+      >
+        <template #role-cell="{ row }">
+          <AtomsRoleBadge :role="row.original.role" show-code />
+        </template>
+      </UTable>
 
-    <ul v-else class="space-y-6">
-      <li v-for="entry in rows" :key="entry.role" class="rounded-lg border border-default bg-elevated/30 p-4">
-        <div class="mb-3 flex flex-wrap items-center gap-2">
-          <AtomsRoleBadge :role="entry.role" show-code />
-        </div>
-        <ul v-if="entry.permissions.length" class="space-y-1.5 text-sm text-muted">
-          <li
-            v-for="p in entry.permissions"
-            :key="`${entry.role}-${p.name}`"
-            class="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:gap-2"
-          >
-            <span class="font-mono text-xs text-highlighted">{{ p.name }}</span>
-            <span class="text-xs sm:text-sm">{{ p.description ?? '—' }}</span>
-          </li>
-        </ul>
-        <p v-else class="text-sm text-muted">Sem permissões associadas neste catálogo.</p>
-      </li>
-    </ul>
+      <div
+        v-if="!props.loading && !tableData.length"
+        class="rounded-b-lg border-t border-default bg-elevated/40 px-4 py-10 text-center text-sm text-muted"
+      >
+        Nenhum papel com permissões no catálogo; volte após aplicar seed.
+      </div>
+    </div>
   </UCard>
 </template>

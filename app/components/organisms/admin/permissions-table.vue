@@ -1,10 +1,57 @@
 <script setup lang="ts">
+import type { TableColumn } from '@nuxt/ui'
 import type { AdminPermission } from '#shared/types/admin'
 
-defineProps<{
+const props = defineProps<{
   rows: AdminPermission[]
   loading: boolean
 }>()
+
+function formatShortDate(iso: string) {
+  try {
+    return new Intl.DateTimeFormat('pt-PT', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(new Date(iso))
+  } catch {
+    return iso
+  }
+}
+
+const columns = computed<TableColumn<AdminPermission>[]>(() => [
+  {
+    accessorKey: 'id',
+    header: 'ID',
+    meta: {
+      class: {
+        th: 'w-14',
+        td: 'tabular-nums text-xs text-muted',
+      },
+    },
+  },
+  {
+    accessorKey: 'name',
+    header: 'Nome',
+    meta: {
+      class: {
+        td: 'font-mono text-xs',
+      },
+    },
+  },
+  {
+    accessorKey: 'description',
+    header: 'Descrição',
+    cell: ({ row }) => row.original.description?.trim() || '—',
+  },
+  {
+    accessorKey: 'createdAt',
+    header: 'Criada em',
+    cell: ({ row }) => formatShortDate(row.original.createdAt),
+  },
+])
 </script>
 
 <template>
@@ -16,29 +63,22 @@ defineProps<{
       </div>
     </template>
 
-    <div v-if="loading" class="flex justify-center py-10">
-      <Icon name="i-lucide-loader-circle" class="size-8 animate-spin text-muted" />
-    </div>
+    <div class="relative">
+      <UTable
+        :data="props.rows"
+        :columns="columns"
+        :loading="props.loading"
+        loading-color="primary"
+        sticky
+        class="min-w-full"
+      />
 
-    <div v-else class="overflow-x-auto">
-      <table class="w-full min-w-lg text-left text-sm">
-        <thead class="border-b border-default text-muted">
-          <tr>
-            <th class="pb-2 pr-4 font-medium">Nome</th>
-            <th class="pb-2 font-medium">Descrição</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="row in rows" :key="row.id" class="border-b border-default/60 last:border-0">
-            <td class="py-2 pr-4 align-top font-mono text-xs text-highlighted">
-              {{ row.name }}
-            </td>
-            <td class="py-2 align-top text-muted">
-              {{ row.description ?? '—' }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div
+        v-if="!props.loading && props.rows.length === 0"
+        class="rounded-b-lg border-t border-default bg-elevated/40 px-4 py-10 text-center text-sm text-muted"
+      >
+        Nenhuma permissão na base ou catálogo ainda não populado pelo seed.
+      </div>
     </div>
   </UCard>
 </template>

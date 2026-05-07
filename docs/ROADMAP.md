@@ -67,7 +67,7 @@ Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (regist
 ### Front
 
 - [x] Layout `/admin` com sidebar e navegação
-- [ ] Página `/admin/users` — tabela com busca, paginação e ação de alterar role
+- [x] Página `/admin/users` — tabela com busca, paginação e ação de alterar role
 - [ ] Página `/admin/sessions` — tabela de sessões com ação de revogar
 - [ ] Guard de rota: redirecionar quem não for `SUPER_ADMIN` para `/`
 

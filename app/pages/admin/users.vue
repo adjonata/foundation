@@ -1,16 +1,5 @@
 <template>
-  <UPage>
-    <UPageHeader
-      headline="Utilizadores"
-      title="Gestão de utilizadores"
-      description="Esta secção será preenchida com a tabela de utilizadores, busca e alteração de papel (ver roadmap)."
-    />
-    <UPageBody>
-      <UCard class="p-6">
-        <p class="text-sm text-muted">Em breve.</p>
-      </UCard>
-    </UPageBody>
-  </UPage>
+  <TemplatesAdminUsersTemplate />
 </template>
 
 <script setup lang="ts">
