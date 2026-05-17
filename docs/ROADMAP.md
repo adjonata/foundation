@@ -107,14 +107,14 @@ Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (regist
 
 ### Back
 
-- [ ] Campo `emailVerifiedAt DateTime?` no model `User`
-- [ ] Migration
-- [ ] Integração de envio de e-mail (ex: Resend ou Nodemailer)
-- [ ] Model `EmailVerificationToken` (`userId`, `token`, `expiresAt`)
-- [ ] Envio automático de token após cadastro
-- [ ] Rota `POST /api/auth/verify-email` — valida token e marca e-mail como verificado
-- [ ] Rota `POST /api/auth/resend-verification` — reenvia token
-- [ ] Bloqueio de acesso a rotas protegidas sem verificação
+- [x] Campo `emailVerifiedAt DateTime?` no model `User`
+- [x] Migration
+- [x] Integração de envio de e-mail (Resend)
+- [x] Model `EmailVerificationToken` (`userId`, `tokenHash`, `expiresAt`, `usedAt`)
+- [x] Envio automático de token após cadastro
+- [x] Rota `POST /api/auth/verify-email` — valida token e marca e-mail como verificado
+- [x] Rota `POST /api/auth/resend-verification` — reenvia token
+- [x] Bloqueio de acesso a rotas protegidas sem verificação
 
 ### Front
 
