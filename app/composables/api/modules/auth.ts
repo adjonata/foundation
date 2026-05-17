@@ -38,11 +38,23 @@ export function useAuthApi() {
     return execute(() => $fetch<AuthUser>('/api/auth/refresh', withDefaults({ method: 'post' })))
   }
 
+  function verifyEmail(body: { token: string }): Promise<AuthUser> {
+    return execute(() => $fetch<AuthUser>('/api/auth/verify-email', withDefaults({ method: 'post', body })), {
+      retryOn401: false,
+    })
+  }
+
+  function resendVerification(): Promise<{ sent: boolean }> {
+    return execute(() => $fetch<{ sent: boolean }>('/api/auth/resend-verification', withDefaults({ method: 'post' })))
+  }
+
   return {
     me,
     login,
     register,
     logout,
     refresh,
+    verifyEmail,
+    resendVerification,
   }
 }
