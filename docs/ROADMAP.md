@@ -116,11 +116,17 @@ Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (regist
 - [x] Rota `POST /api/auth/resend-verification` — reenvia token
 - [x] Bloqueio de acesso a rotas protegidas sem verificação
 
+### Back (admin)
+
+- [ ] Rota `POST /api/protected/admin/users/:id/resend-verification` — admin reenvia e-mail de verificação para um utilizador específico (requer `SUPER_ADMIN`)
+
 ### Front
 
-- [ ] Página `/auth/verify-email` — instrução de verificação com botão de reenvio
-- [ ] Banner de alerta para usuários com e-mail não verificado
-- [ ] Feedback visual após verificação bem-sucedida
+- [ ] Página `/verificar-email` — instrução de verificação com botão de reenvio
+- [ ] Banner persistente no topo para utilizadores autenticados com e-mail não verificado, com link para `/verificar-email`
+- [ ] Feedback visual após verificação bem-sucedida (toast + redirect automático)
+- [ ] Coluna `Verificado` na tabela `/admin/users` — badge verde/cinza com base em `emailVerifiedAt`
+- [ ] Ação "Reenviar verificação" por linha em `/admin/users` — visível apenas para utilizadores não verificados
 
 ---
 
