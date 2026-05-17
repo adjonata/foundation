@@ -122,11 +122,11 @@ Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (regist
 
 ### Front
 
-- [ ] Página `/verificar-email` — instrução de verificação com botão de reenvio
-- [ ] Banner persistente no topo para utilizadores autenticados com e-mail não verificado, com link para `/verificar-email`
-- [ ] Feedback visual após verificação bem-sucedida (toast + redirect automático)
-- [ ] Coluna `Verificado` na tabela `/admin/users` — badge verde/cinza com base em `emailVerifiedAt`
-- [ ] Ação "Reenviar verificação" por linha em `/admin/users` — visível apenas para utilizadores não verificados
+- [x] Página `/verificar-email` — instrução de verificação com botão de reenvio
+- [x] Banner persistente no topo para utilizadores autenticados com e-mail não verificado, com link para `/verificar-email`
+- [x] Feedback visual após verificação bem-sucedida (toast + redirect automático)
+- [x] Coluna `Verificado` na tabela `/admin/users` — badge verde/cinza com base em `emailVerifiedAt`
+- [x] Ação "Reenviar verificação" por linha em `/admin/users` — visível apenas para utilizadores não verificados
 
 ---
 

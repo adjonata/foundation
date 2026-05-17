@@ -7,7 +7,7 @@ import { getRoleDisplayLabel } from '#shared/utils/roleDisplay'
 const api = useApi()
 const toast = useToast()
 
-const { pagination, items, meta, loading, requestError, upaginationProps, totalCount, pageRangeLabel } = usePaginated<
+const { pagination, items, loading, requestError, upaginationProps, totalCount, pageRangeLabel } = usePaginated<
   AdminUserListItem,
   Record<string, never>
 >({
@@ -50,8 +50,25 @@ async function applyRole(user: AdminUserListItem, newRole: (typeof prismaRoleSlu
   }
 }
 
-function roleMenuItems(user: AdminUserListItem): DropdownMenuItem[][] {
-  return [
+async function sendVerification(user: AdminUserListItem) {
+  try {
+    await api.admin.resendVerificationForUser(user.id)
+    toast.add({
+      title: 'E-mail reenviado',
+      description: `Verificação enviada para ${user.email}`,
+      color: 'success',
+    })
+  } catch (error: unknown) {
+    toast.add({
+      title: 'Não foi possível reenviar',
+      description: getFetchErrorMessage(error),
+      color: 'error',
+    })
+  }
+}
+
+function actionMenuItems(user: AdminUserListItem): DropdownMenuItem[][] {
+  const groups: DropdownMenuItem[][] = [
     prismaRoleSlugs.map((slug) => ({
       label: getRoleDisplayLabel(slug),
       description: slug,
@@ -61,6 +78,20 @@ function roleMenuItems(user: AdminUserListItem): DropdownMenuItem[][] {
       },
     })),
   ]
+
+  if (!user.emailVerified) {
+    groups.push([
+      {
+        label: 'Reenviar verificação',
+        icon: 'i-lucide-mail',
+        onSelect: () => {
+          void sendVerification(user)
+        },
+      },
+    ])
+  }
+
+  return groups
 }
 
 const columns = computed<TableColumn<AdminUserListItem>[]>(() => [
@@ -81,6 +112,10 @@ const columns = computed<TableColumn<AdminUserListItem>[]>(() => [
   {
     accessorKey: 'role',
     header: 'Papel',
+  },
+  {
+    accessorKey: 'emailVerified',
+    header: 'Verificado',
   },
   {
     accessorKey: 'createdAt',
@@ -119,13 +154,20 @@ const columns = computed<TableColumn<AdminUserListItem>[]>(() => [
           :data="items"
           :columns="columns"
           :loading="loading"
-          :actions-options="roleMenuItems"
+          :actions-options="actionMenuItems"
           :total-items="totalCount"
           :pagination-props="upaginationProps"
           :page-range-label="pageRangeLabel"
         >
           <template #role-role="{ row }">
             <AtomsRoleBadge :role="row.original.role" />
+          </template>
+          <template #role-emailVerified="{ row }">
+            <UBadge
+              :color="row.original.emailVerified ? 'success' : 'neutral'"
+              variant="subtle"
+              :label="row.original.emailVerified ? 'Sim' : 'Não'"
+            />
           </template>
         </AtomsTable>
       </div>

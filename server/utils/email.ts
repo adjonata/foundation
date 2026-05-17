@@ -20,7 +20,6 @@ function getAppUrl() {
 export async function sendVerificationEmail(to: string, rawToken: string) {
   const resend = getResend()
   const url = `${getAppUrl()}/verificar-email?token=${rawToken}`
-
   const { error } = await resend.emails.send({
     from: getEmailFrom(),
     to,
@@ -34,6 +33,7 @@ export async function sendVerificationEmail(to: string, rawToken: string) {
   })
 
   if (error) {
+    console.error('[email] Resend retornou erro:', JSON.stringify(error))
     throw new AppError('EMAIL_SEND_FAILED', 'Falha ao enviar e-mail de verificacao', 500)
   }
 }

@@ -21,6 +21,7 @@ export type AdminUserListItem = {
   email: string
   name: string | null
   role: string
+  emailVerified: boolean
   createdAt: string
   updatedAt: string
 }

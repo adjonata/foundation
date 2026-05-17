@@ -60,6 +60,12 @@ export const useAuthStore = defineStore('auth', () => {
       sessionChecked.value = true
     }
   }
+
+  async function verifyEmail(token: string) {
+    const res = await api.auth.verifyEmail({ token })
+    user.value = res
+  }
+
   return {
     user,
     sessionChecked,
@@ -71,5 +77,6 @@ export const useAuthStore = defineStore('auth', () => {
     register,
     logout,
     clearSession,
+    verifyEmail,
   }
 })

@@ -51,6 +51,15 @@ export function useAdminApi() {
     return execute(() => $fetch<void>(`/api/protected/admin/sessions/${sessionId}`, withDefaults({ method: 'delete' })))
   }
 
+  function resendVerificationForUser(userId: number): Promise<{ sent: boolean }> {
+    return execute(() =>
+      $fetch<{ sent: boolean }>(
+        `/api/protected/admin/users/${userId}/resend-verification`,
+        withDefaults({ method: 'post' }),
+      ),
+    )
+  }
+
   return {
     listPermissions,
     listRolesWithPermissions,
@@ -58,5 +67,6 @@ export function useAdminApi() {
     updateUserRole,
     listSessions,
     revokeSession,
+    resendVerificationForUser,
   }
 }

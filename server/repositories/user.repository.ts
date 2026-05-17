@@ -14,6 +14,7 @@ const adminListSelect = {
   email: true,
   name: true,
   role: true,
+  emailVerifiedAt: true,
   createdAt: true,
   updatedAt: true,
 } satisfies Prisma.UserSelect
@@ -117,6 +118,10 @@ export const userRepository = {
         role: input.role ?? Role.USER,
       },
     })
+  },
+
+  deleteById(id: number) {
+    return prisma.user.delete({ where: { id } })
   },
 
   markEmailVerified(id: number) {
