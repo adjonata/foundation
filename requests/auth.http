@@ -35,7 +35,7 @@ Content-Type: application/json
 
 {
   "name": "Teste Verificação",
-  "email": "verificacao@teste.dev",
+  "email": "{{$dotenv TEST_EMAIL}}",
   "password": "senha123456"
 }
 

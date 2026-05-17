@@ -110,10 +110,17 @@ export const authService = {
       passwordHash,
     })
 
-    // E-mail enviado antes de emitir tokens: se falhar, nenhuma sessão fica órfã.
-    // O utilizador pode fazer login e usar /auth/resend-verification para reenviar.
     const rawToken = await issueVerificationToken(user.id)
-    await sendVerificationEmail(user.email, rawToken)
+
+    try {
+      await sendVerificationEmail(user.email, rawToken)
+    } catch (err) {
+      // Envio falhou — remove o utilizador para que o mesmo e-mail possa ser
+      // re-registado depois que o problema de envio estiver resolvido.
+      // O token de verificação é apagado em cascata pelo banco.
+      await userRepository.deleteById(user.id)
+      throw err
+    }
 
     const tokens = await issueTokenPair(user)
 

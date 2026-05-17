@@ -119,6 +119,10 @@ export const userRepository = {
     })
   },
 
+  deleteById(id: number) {
+    return prisma.user.delete({ where: { id } })
+  },
+
   markEmailVerified(id: number) {
     return prisma.user.update({
       where: { id },
