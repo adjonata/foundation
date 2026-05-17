@@ -1,4 +1,5 @@
 import { createError } from 'h3'
+import { userRepository } from '../repositories/user.repository'
 import { getAccessTokenFromCookie } from '../utils/cookies'
 import { verifyToken } from '../utils/jwt'
 
@@ -20,7 +21,16 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  if (event.path.startsWith(PROTECTED_API_PREFIX) && !event.context.auth) {
+  if (!event.path.startsWith(PROTECTED_API_PREFIX)) return
+
+  if (!event.context.auth) {
     throw createError({ statusCode: 401, statusMessage: 'Nao autenticado' })
+  }
+
+  // A verificação de e-mail é feita via banco (não no JWT) para que o desbloqueio
+  // seja imediato após confirmar o link, sem exigir novo login ou refresh de token.
+  const user = await userRepository.findById(event.context.auth.userId)
+  if (!user?.emailVerifiedAt) {
+    throw createError({ statusCode: 403, statusMessage: 'E-mail nao verificado', data: { code: 'EMAIL_NOT_VERIFIED' } })
   }
 })

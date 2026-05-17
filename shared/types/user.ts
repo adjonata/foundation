@@ -7,4 +7,5 @@ export type AuthUser = {
   email: string
   name: string | null
   role: string
+  emailVerified: boolean
 }
