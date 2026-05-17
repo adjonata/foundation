@@ -14,6 +14,7 @@ const adminListSelect = {
   email: true,
   name: true,
   role: true,
+  emailVerifiedAt: true,
   createdAt: true,
   updatedAt: true,
 } satisfies Prisma.UserSelect
