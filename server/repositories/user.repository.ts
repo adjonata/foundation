@@ -39,6 +39,7 @@ export const userRepository = {
   listAll() {
     return prisma.user.findMany({
       orderBy: { id: 'asc' },
+      select: adminListSelect,
     })
   },
 
@@ -115,6 +116,13 @@ export const userRepository = {
         passwordHash: input.passwordHash,
         role: input.role ?? Role.USER,
       },
+    })
+  },
+
+  markEmailVerified(id: number) {
+    return prisma.user.update({
+      where: { id },
+      data: { emailVerifiedAt: new Date() },
     })
   },
 }

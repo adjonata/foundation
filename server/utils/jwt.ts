@@ -1,4 +1,4 @@
-import { jwtVerify, SignJWT } from 'jose'
+import { errors, jwtVerify, SignJWT } from 'jose'
 import { AppError } from './errors'
 
 const ACCESS_TOKEN_TTL = Number(process.env.ACCESS_TOKEN_TTL ?? 60 * 15)
@@ -45,10 +45,15 @@ export async function verifyToken(token: string, expectedType: 'access' | 'refre
     if (result.payload.type !== expectedType) {
       throw new AppError('INVALID_TOKEN', 'Tipo de token invalido', 401)
     }
-
     return result.payload
-  } catch {
-    throw new AppError('INVALID_TOKEN', 'Token invalido ou expirado', 401)
+  } catch (err) {
+    if (err instanceof AppError) throw err
+    // Distingue expiração natural de token corrompido/adulterado para que o serviço
+    // de refresh possa diferenciar reuso real de expiração legítima.
+    if (err instanceof errors.JWTExpired) {
+      throw new AppError('TOKEN_EXPIRED', 'Token expirado', 401)
+    }
+    throw new AppError('INVALID_TOKEN', 'Token invalido', 401)
   }
 }
 

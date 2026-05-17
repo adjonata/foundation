@@ -16,6 +16,7 @@ export async function seedUsers(prisma: PrismaClient) {
       email: 'admin@starter.dev',
       passwordHash,
       role: Role.SUPER_ADMIN,
+      emailVerifiedAt: new Date(),
     },
   })
 
@@ -27,6 +28,7 @@ export async function seedUsers(prisma: PrismaClient) {
       email: 'user@starter.dev',
       passwordHash,
       role: Role.USER,
+      emailVerifiedAt: new Date(),
     },
   })
 
