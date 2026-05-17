@@ -73,7 +73,7 @@ export function useApiBase() {
     }
   }
 
-  async function handleRefreshFailure(error: unknown) {
+  async function handleRefreshFailure() {
     if (!import.meta.client || refreshFailureHandled) return
     refreshFailureHandled = true
 
@@ -101,18 +101,21 @@ export function useApiBase() {
   }
 
   // Normaliza erros e tenta refresh automatico em respostas 401.
+  // No SSR o refresh nao e tentado: os novos cookies seriam gravados apenas no
+  // sub-request interno do Nitro e nunca chegariam ao browser. O cliente faz o
+  // refresh corretamente apos a hidratacao.
   async function execute<T>(request: () => Promise<T>, options?: ExecuteOptions): Promise<T> {
     const retryOn401 = options?.retryOn401 ?? true
 
     try {
       return await request()
     } catch (error) {
-      if (retryOn401 && getStatusCode(error) === 401) {
+      if (retryOn401 && getStatusCode(error) === 401 && import.meta.client) {
         try {
           await refreshSession()
           return await request()
         } catch (retryError) {
-          await handleRefreshFailure(retryError)
+          await handleRefreshFailure()
           throwNormalized(retryError)
         }
       }

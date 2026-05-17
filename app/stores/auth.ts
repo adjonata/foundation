@@ -21,10 +21,14 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const res = await api.auth.me()
       user.value = res
+      sessionChecked.value = true
     } catch {
       clearSession()
-    } finally {
-      sessionChecked.value = true
+      // No SSR: nao marca como verificado para que o client possa tentar novamente
+      // com refresh real apos a hidratacao (novos cookies chegam ao browser).
+      if (import.meta.client) {
+        sessionChecked.value = true
+      }
     }
   }
 
