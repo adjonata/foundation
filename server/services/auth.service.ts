@@ -23,7 +23,14 @@ async function handleRefreshTokenReuse(refreshToken: string) {
     throw new AppError('INVALID_TOKEN', 'Refresh token invalido', 401)
   }
 
-  // Token já pertenceu a uma sessão (expirada ou revogada): tratar como reutilização.
+  // JWT expirou mas sessao ainda esta ativa: isso e expiração natural, nao reutilizacao.
+  // Reutilizacao real ocorre quando o JWT e valido (verificado com sucesso) mas o hash
+  // nao bate com a sessao vigente — tratado diretamente em authService.refresh().
+  if (session.revokedAt || session.expiresAt.getTime() < Date.now()) {
+    throw new AppError('INVALID_TOKEN', 'Sessao expirada', 401)
+  }
+
+  // Sessao ativa encontrada para um JWT invalido: sinal de adulteracao — revogar tudo.
   await authRepository.revokeAllUserSessions(session.userId)
   throw new AppError('REFRESH_TOKEN_REUSE', 'Reutilizacao de refresh token detectada', 401)
 }
