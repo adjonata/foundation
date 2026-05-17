@@ -50,6 +50,10 @@ DATABASE_URL="postgresql://usuario:senha@localhost:5432/nuxt_starter"
 JWT_SECRET="sua-chave-secreta-longa-e-aleatoria"
 ACCESS_TOKEN_TTL=900        # 15 minutos
 REFRESH_TOKEN_TTL=604800    # 7 dias
+
+RESEND_API_KEY="re_xxxxxxxxxxxxxxxxxxxx"
+EMAIL_FROM="noreply@seudominio.com"
+PUBLIC_APP_URL="http://localhost:3000"
 ```
 
 > Gere um JWT_SECRET seguro com `openssl rand -base64 64`
@@ -57,8 +61,8 @@ REFRESH_TOKEN_TTL=604800    # 7 dias
 ### 4. Configure o banco de dados
 
 ```bash
-pnpm prisma migrate dev
-pnpm prisma db seed
+pnpm prisma:migrate
+pnpm prisma:seed
 ```
 
 ### 5. Inicie o servidor
@@ -88,11 +92,13 @@ Acesse em `http://localhost:3000`
 
 | Método | Rota                 | Descrição                                                               |
 | ------ | -------------------- | ----------------------------------------------------------------------- |
-| `POST` | `/api/auth/register` | Criar nova conta e iniciar sessão                                       |
-| `POST` | `/api/auth/login`    | Entrar na conta e iniciar sessão                                        |
-| `POST` | `/api/auth/logout`   | Encerrar sessão atual (revoga refresh da sessão)                        |
-| `POST` | `/api/auth/refresh`  | Rotacionar tokens e sessão (com proteção contra reutilização)           |
-| `GET`  | `/api/auth/me`       | Retornar utilizador autenticado da sessão atual (sanitizado, sem senha) |
+| `POST` | `/api/auth/register`              | Criar nova conta e iniciar sessão                                       |
+| `POST` | `/api/auth/login`                 | Entrar na conta e iniciar sessão                                        |
+| `POST` | `/api/auth/logout`                | Encerrar sessão atual (revoga refresh da sessão)                        |
+| `POST` | `/api/auth/refresh`               | Rotacionar tokens e sessão (com proteção contra reutilização)           |
+| `GET`  | `/api/auth/me`                    | Retornar utilizador autenticado da sessão atual (sanitizado, sem senha) |
+| `POST` | `/api/auth/verify-email`          | Verificar e-mail com token recebido por e-mail (TTL: 24h)               |
+| `POST` | `/api/auth/resend-verification`   | Reenviar e-mail de verificação (requer autenticação)                    |
 
 > Os tokens são enviados automaticamente como cookies `HttpOnly`.
 > Em caso de reutilização de refresh token, todas as sessões ativas do utilizador são revogadas.
@@ -103,12 +109,13 @@ Todas as rotas abaixo exigem sessão válida e permissão de admin no backend (`
 
 | Método   | Rota                                  | Descrição                                              |
 | -------- | ------------------------------------- | ------------------------------------------------------ |
-| `GET`    | `/api/protected/admin/permissions`    | Listar catálogo de permissões                          |
-| `GET`    | `/api/protected/admin/roles`          | Listar papéis e permissões associadas                  |
-| `GET`    | `/api/protected/admin/users`          | Listar utilizadores com paginação e busca (`pageSize`) |
-| `PATCH`  | `/api/protected/admin/users/:id/role` | Atualizar papel do utilizador                          |
-| `GET`    | `/api/protected/admin/sessions`       | Listar sessões ativas com paginação                    |
-| `DELETE` | `/api/protected/admin/sessions/:id`   | Revogar sessão específica                              |
+| `GET`    | `/api/protected/admin/permissions`                    | Listar catálogo de permissões                          |
+| `GET`    | `/api/protected/admin/roles`                          | Listar papéis e permissões associadas                  |
+| `GET`    | `/api/protected/admin/users`                          | Listar utilizadores com paginação e busca (`pageSize`) |
+| `PATCH`  | `/api/protected/admin/users/:id/role`                 | Atualizar papel do utilizador                          |
+| `POST`   | `/api/protected/admin/users/:id/resend-verification`  | Reenviar e-mail de verificação para um utilizador      |
+| `GET`    | `/api/protected/admin/sessions`                       | Listar sessões ativas com paginação                    |
+| `DELETE` | `/api/protected/admin/sessions/:id`                   | Revogar sessão específica                              |
 
 ### Utilitário público
 
@@ -206,11 +213,26 @@ Rotas sob `/api/protected/admin/*` exigem sessão válida e permissões de paine
 ## Comandos úteis
 
 ```bash
-pnpm dev                      # Servidor de desenvolvimento
-pnpm build                    # Build de produção
-pnpm preview                  # Preview do build
+pnpm dev                # Servidor de desenvolvimento
+pnpm build              # Build de produção
+pnpm preview            # Preview do build
+pnpm typecheck          # Verificar tipos TypeScript
+pnpm lint               # ESLint
+pnpm format             # Prettier
 
-pnpm prisma migrate dev       # Rodar migrations
-pnpm prisma db seed           # Popular banco com dados padrão
-pnpm prisma studio            # Interface visual do banco
+pnpm prisma:migrate     # Criar e aplicar migrations
+pnpm prisma:seed        # Popular banco com dados padrão
+pnpm prisma:generate    # Regenerar Prisma Client
+pnpm prisma:studio      # Interface visual do banco
 ```
+
+## Testes manuais de API
+
+Os arquivos em `requests/` cobrem os fluxos principais com a extensão [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) do VS Code.
+
+```bash
+cp requests/.env.example requests/.env
+# Edite requests/.env se necessário (credenciais do seed já preenchidas)
+```
+
+Abra qualquer `.http` e clique em **Send Request** acima de cada bloco. Os cookies de autenticação são gerenciados automaticamente por host — basta executar o login antes das rotas protegidas.
