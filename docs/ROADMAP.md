@@ -118,7 +118,7 @@ Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (regist
 
 ### Back (admin)
 
-- [ ] Rota `POST /api/protected/admin/users/:id/resend-verification` — admin reenvia e-mail de verificação para um utilizador específico (requer `SUPER_ADMIN`)
+- [x] Rota `POST /api/protected/admin/users/:id/resend-verification` — admin reenvia e-mail de verificação para um utilizador específico (requer `SUPER_ADMIN`)
 
 ### Front
 

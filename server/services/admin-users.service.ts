@@ -5,6 +5,7 @@ import { Role } from '../../prisma/generated/client'
 import { AppError } from '../utils/errors'
 import type { AdminListedUserRow } from '../repositories/user.repository'
 import { userRepository } from '../repositories/user.repository'
+import { authService } from './auth.service'
 
 function toListItem(row: AdminListedUserRow): AdminUserListItem {
   return {
@@ -38,5 +39,9 @@ export const adminUsersService = {
       throw new AppError('LAST_SUPER_ADMIN', 'Nao e possivel alterar o papel do ultimo SUPER_ADMIN do sistema', 409)
     }
     return toListItem(result.row)
+  },
+
+  async resendVerification(targetUserId: number) {
+    return authService.resendVerification(targetUserId)
   },
 }
