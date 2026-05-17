@@ -9,6 +9,10 @@ function baseCookieOptions(maxAge: number) {
   return {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
+    // 'lax' (não 'strict') é intencional: permite que o SSR receba os cookies na
+    // navegação inicial (top-level GET), necessário para hidratar a sessão sem flash.
+    // CSRF está coberto porque todas as mutações usam POST/PATCH/DELETE com JSON,
+    // e 'lax' já bloqueia cookies em requisições cross-site que não sejam navegação.
     sameSite: 'lax' as const,
     path: '/',
     maxAge,

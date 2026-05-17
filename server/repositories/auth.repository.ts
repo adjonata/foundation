@@ -20,9 +20,8 @@ export const authRepository = {
   },
 
   findSessionByRefreshTokenHash(refreshTokenHash: string) {
-    return prisma.authSession.findFirst({
+    return prisma.authSession.findUnique({
       where: { refreshTokenHash },
-      orderBy: { createdAt: 'desc' },
     })
   },
 
