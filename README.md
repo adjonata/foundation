@@ -90,15 +90,15 @@ Acesse em `http://localhost:3000`
 
 ### Autenticação (`/api/auth`)
 
-| Método | Rota                 | Descrição                                                               |
-| ------ | -------------------- | ----------------------------------------------------------------------- |
-| `POST` | `/api/auth/register`              | Criar nova conta e iniciar sessão                                       |
-| `POST` | `/api/auth/login`                 | Entrar na conta e iniciar sessão                                        |
-| `POST` | `/api/auth/logout`                | Encerrar sessão atual (revoga refresh da sessão)                        |
-| `POST` | `/api/auth/refresh`               | Rotacionar tokens e sessão (com proteção contra reutilização)           |
-| `GET`  | `/api/auth/me`                    | Retornar utilizador autenticado da sessão atual (sanitizado, sem senha) |
-| `POST` | `/api/auth/verify-email`          | Verificar e-mail com token recebido por e-mail (TTL: 24h)               |
-| `POST` | `/api/auth/resend-verification`   | Reenviar e-mail de verificação (requer autenticação)                    |
+| Método | Rota                            | Descrição                                                               |
+| ------ | ------------------------------- | ----------------------------------------------------------------------- |
+| `POST` | `/api/auth/register`            | Criar nova conta e iniciar sessão                                       |
+| `POST` | `/api/auth/login`               | Entrar na conta e iniciar sessão                                        |
+| `POST` | `/api/auth/logout`              | Encerrar sessão atual (revoga refresh da sessão)                        |
+| `POST` | `/api/auth/refresh`             | Rotacionar tokens e sessão (com proteção contra reutilização)           |
+| `GET`  | `/api/auth/me`                  | Retornar utilizador autenticado da sessão atual (sanitizado, sem senha) |
+| `POST` | `/api/auth/verify-email`        | Verificar e-mail com token recebido por e-mail (TTL: 24h)               |
+| `POST` | `/api/auth/resend-verification` | Reenviar e-mail de verificação (requer autenticação)                    |
 
 > Os tokens são enviados automaticamente como cookies `HttpOnly`.
 > Em caso de reutilização de refresh token, todas as sessões ativas do utilizador são revogadas.
@@ -107,15 +107,15 @@ Acesse em `http://localhost:3000`
 
 Todas as rotas abaixo exigem sessão válida e permissão de admin no backend (`SUPER_ADMIN`).
 
-| Método   | Rota                                  | Descrição                                              |
-| -------- | ------------------------------------- | ------------------------------------------------------ |
-| `GET`    | `/api/protected/admin/permissions`                    | Listar catálogo de permissões                          |
-| `GET`    | `/api/protected/admin/roles`                          | Listar papéis e permissões associadas                  |
-| `GET`    | `/api/protected/admin/users`                          | Listar utilizadores com paginação e busca (`pageSize`) |
-| `PATCH`  | `/api/protected/admin/users/:id/role`                 | Atualizar papel do utilizador                          |
-| `POST`   | `/api/protected/admin/users/:id/resend-verification`  | Reenviar e-mail de verificação para um utilizador      |
-| `GET`    | `/api/protected/admin/sessions`                       | Listar sessões ativas com paginação                    |
-| `DELETE` | `/api/protected/admin/sessions/:id`                   | Revogar sessão específica                              |
+| Método   | Rota                                                 | Descrição                                              |
+| -------- | ---------------------------------------------------- | ------------------------------------------------------ |
+| `GET`    | `/api/protected/admin/permissions`                   | Listar catálogo de permissões                          |
+| `GET`    | `/api/protected/admin/roles`                         | Listar papéis e permissões associadas                  |
+| `GET`    | `/api/protected/admin/users`                         | Listar utilizadores com paginação e busca (`pageSize`) |
+| `PATCH`  | `/api/protected/admin/users/:id/role`                | Atualizar papel do utilizador                          |
+| `POST`   | `/api/protected/admin/users/:id/resend-verification` | Reenviar e-mail de verificação para um utilizador      |
+| `GET`    | `/api/protected/admin/sessions`                      | Listar sessões ativas com paginação                    |
+| `DELETE` | `/api/protected/admin/sessions/:id`                  | Revogar sessão específica                              |
 
 ### Utilitário público
 

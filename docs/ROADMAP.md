@@ -153,17 +153,20 @@ Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (regist
 
 ### Back
 
-- [ ] Campo `deletedAt DateTime?` nos models principais (`User`)
-- [ ] Migration
-- [ ] Helper `softDelete(model, id)` reutilizável
-- [ ] Filtro `where: { deletedAt: null }` automático nas queries dos repositories
-- [ ] Rota `DELETE /api/protected/admin/users/:id` — soft delete de usuário
+- [x] Campo `deletedAt DateTime?` no model `User`
+- [x] Migration
+- [x] `findByEmail` e `findById` filtram utilizadores desativados (bloqueia login e acesso a rotas protegidas)
+- [x] `login()` rejeita credenciais de utilizadores desativados com `INVALID_CREDENTIALS`
+- [x] Rota `DELETE /api/protected/admin/users/:id` — desativa utilizador e revoga sessões (requer `ADMIN_USERS_DELETE`)
+- [x] Rota `PATCH /api/protected/admin/users/:id/restore` — reativa utilizador desativado (requer `ADMIN_USERS_RESTORE`)
+- [x] Proteção do último `SUPER_ADMIN` ativo tanto no soft delete como na alteração de papel
 
 ### Front
 
-- [ ] Ação de desativar usuário na página `/admin/users`
-- [ ] Filtro de mostrar/ocultar usuários desativados
-- [ ] Indicador visual de usuário desativado na tabela
+- [x] Ação "Desativar conta" por linha em `/admin/users` (oculta para utilizadores já desativados)
+- [x] Ação "Reativar conta" por linha em `/admin/users` (visível apenas para utilizadores desativados)
+- [x] Toggle "Mostrar desativados" no cabeçalho da tabela (reset para página 1 ao alternar)
+- [x] Coluna "Estado" com badge Ativo/Desativado
 
 ---
 
@@ -272,69 +275,18 @@ Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (regist
 
 ---
 
-## 13. Two-Factor Authentication (2FA)
+## 13. Login com Google (OAuth)
 
 ### Back
 
-- [ ] Dependência `otplib` + `qrcode`
-- [ ] Campos `twoFactorSecret String?` e `twoFactorEnabledAt DateTime?` no model `User`
+- [ ] Dependência `arctic` (OAuth 2.0 client leve, sem magic)
+- [ ] Campos `googleId String? @unique` e `avatarUrl String?` no model `User`
 - [ ] Migration
-- [ ] Rota `POST /api/auth/2fa/setup` — gera secret e QR code
-- [ ] Rota `POST /api/auth/2fa/enable` — valida primeiro código TOTP e habilita
-- [ ] Rota `POST /api/auth/2fa/disable` — desabilita (exige senha)
-- [ ] Rota `POST /api/auth/2fa/verify` — validar código no fluxo de login
-- [ ] Gerar e armazenar 8 códigos de backup no setup
-- [ ] Ajuste no fluxo de login: retornar `requiresTwoFactor: true` quando 2FA ativo
+- [ ] Rota `GET /api/auth/google` — redireciona para o consentimento Google com `state` e `code_verifier` (PKCE)
+- [ ] Rota `GET /api/auth/google/callback` — troca código por tokens, upsert do utilizador e emite sessão
+- [ ] Utilizadores OAuth sem senha não podem usar login por credenciais nem reset de senha
 
 ### Front
 
-- [ ] Página `/settings/security` — seção de 2FA com QR code e campo de confirmação
-- [ ] Página `/auth/2fa` — tela intermediária no login para inserir código TOTP
-- [ ] Exibição dos códigos de backup após habilitar (com aviso para salvar)
-
----
-
-## 14. Internacionalização (i18n)
-
-### Back
-
-- [ ] Mensagens de erro em pt-BR e en-US via objeto de tradução em `server/utils/errors`
-
-### Front
-
-- [ ] Configuração do módulo `@nuxtjs/i18n`
-- [ ] Arquivos de tradução `locales/pt-BR.json` e `locales/en-US.json`
-- [ ] Todas as strings de UI extraídas para os arquivos de tradução
-- [ ] Seletor de idioma no header
-
----
-
-## 15. Testes Automatizados
-
-### Back
-
-- [ ] Setup de testes unitários para services e utils críticos
-- [ ] Testes de integração para rotas de auth e admin (`/api/auth/*`, `/api/protected/admin/*`)
-- [ ] Fixtures/seed de teste para cenários de permissão e sessão
-
-### Front
-
-- [ ] Testes de componentes para fluxos de auth e tabelas admin
-- [ ] Testes e2e dos fluxos principais (`entrar`, `/admin/users`, `/admin/sessions`)
-- [ ] Pipeline de CI com execução de testes + typecheck
-
----
-
-## 16. Observabilidade
-
-### Back
-
-- [ ] Padronizar logs estruturados por request (id de correlação, rota, duração, status)
-- [ ] Captura centralizada de erros com contexto (utilizador/sessão quando houver)
-- [ ] Métricas básicas de API (latência, erros por rota, volume)
-
-### Front
-
-- [ ] Instrumentar erro de runtime e falhas de fetch com contexto mínimo
-- [ ] Painel básico para acompanhar falhas dos fluxos críticos (auth/admin)
-- [ ] Documentação operacional de diagnóstico rápido
+- [ ] Botão "Continuar com Google" nas páginas `/entrar` e `/cadastrar`
+- [ ] Redirecionamento transparente pós-callback (respeitando query `redirect`)

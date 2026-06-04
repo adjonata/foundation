@@ -16,7 +16,7 @@ export function buildPaginatedMeta(total: number, page: number, pageSize: number
     page,
     pageSize,
     total,
-    pageCount: computePageCount(total, pageSize)
+    pageCount: computePageCount(total, pageSize),
   }
 }
 
@@ -24,7 +24,7 @@ export function buildPaginatedMeta(total: number, page: number, pageSize: number
 export function buildPaginatedResult<T>(items: T[], total: number, page: number, pageSize: number): PaginatedResult<T> {
   return {
     items,
-    meta: buildPaginatedMeta(total, page, pageSize)
+    meta: buildPaginatedMeta(total, page, pageSize),
   }
 }
 

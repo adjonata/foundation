@@ -30,7 +30,10 @@ export default defineEventHandler(async (event) => {
   // A verificação de e-mail é feita via banco (não no JWT) para que o desbloqueio
   // seja imediato após confirmar o link, sem exigir novo login ou refresh de token.
   const user = await userRepository.findById(event.context.auth.userId)
-  if (!user?.emailVerifiedAt) {
+  if (!user) {
+    throw createError({ statusCode: 401, statusMessage: 'Conta desativada' })
+  }
+  if (!user.emailVerifiedAt) {
     throw createError({ statusCode: 403, statusMessage: 'E-mail nao verificado', data: { code: 'EMAIL_NOT_VERIFIED' } })
   }
 })

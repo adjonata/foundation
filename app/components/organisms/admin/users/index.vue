@@ -7,7 +7,10 @@ import { getRoleDisplayLabel } from '#shared/utils/roleDisplay'
 const api = useApi()
 const toast = useToast()
 
-const { pagination, items, loading, requestError, upaginationProps, totalCount, pageRangeLabel } = usePaginated<
+const showDeleted = ref(false)
+
+const { pagination, items, loading, requestError, upaginationProps, totalCount, pageRangeLabel, goToFirstPage } =
+  usePaginated<
   AdminUserListItem,
   Record<string, never>
 >({
@@ -26,8 +29,11 @@ const { pagination, items, loading, requestError, upaginationProps, totalCount, 
       page: p.page,
       pageSize: p.pageSize,
       search: p.search || undefined,
+      showDeleted: showDeleted.value,
     }),
 })
+
+watch(showDeleted, () => goToFirstPage())
 
 async function applyRole(user: AdminUserListItem, newRole: (typeof prismaRoleSlugs)[number]) {
   if (user.role === newRole) return
@@ -67,7 +73,59 @@ async function sendVerification(user: AdminUserListItem) {
   }
 }
 
+async function restoreUser(user: AdminUserListItem) {
+  try {
+    const updated = await api.admin.restoreUser(user.id)
+    const idx = items.value.findIndex((r: AdminUserListItem) => r.id === user.id)
+    if (idx >= 0) items.value[idx] = updated
+    toast.add({
+      title: 'Utilizador reativado',
+      description: `${user.email} foi reativado.`,
+      color: 'success',
+    })
+  } catch (error: unknown) {
+    toast.add({
+      title: 'Não foi possível reativar',
+      description: getFetchErrorMessage(error),
+      color: 'error',
+    })
+  }
+}
+
+async function deleteUser(user: AdminUserListItem) {
+  try {
+    const updated = await api.admin.deleteUser(user.id)
+    const idx = items.value.findIndex((r: AdminUserListItem) => r.id === user.id)
+    if (idx >= 0) items.value[idx] = updated
+    toast.add({
+      title: 'Utilizador desativado',
+      description: `${user.email} foi desativado e as sessões foram encerradas.`,
+      color: 'success',
+    })
+  } catch (error: unknown) {
+    toast.add({
+      title: 'Não foi possível desativar',
+      description: getFetchErrorMessage(error),
+      color: 'error',
+    })
+  }
+}
+
 function actionMenuItems(user: AdminUserListItem): DropdownMenuItem[][] {
+  if (user.deletedAt) {
+    return [
+      [
+        {
+          label: 'Reativar conta',
+          icon: 'i-lucide-user-check',
+          onSelect: () => {
+            void restoreUser(user)
+          },
+        },
+      ],
+    ]
+  }
+
   const groups: DropdownMenuItem[][] = [
     prismaRoleSlugs.map((slug) => ({
       label: getRoleDisplayLabel(slug),
@@ -79,17 +137,28 @@ function actionMenuItems(user: AdminUserListItem): DropdownMenuItem[][] {
     })),
   ]
 
+  const extras: DropdownMenuItem[] = []
+
   if (!user.emailVerified) {
-    groups.push([
-      {
-        label: 'Reenviar verificação',
-        icon: 'i-lucide-mail',
-        onSelect: () => {
-          void sendVerification(user)
-        },
+    extras.push({
+      label: 'Reenviar verificação',
+      icon: 'i-lucide-mail',
+      onSelect: () => {
+        void sendVerification(user)
       },
-    ])
+    })
   }
+
+  extras.push({
+    label: 'Desativar conta',
+    icon: 'i-lucide-user-x',
+    color: 'error' as const,
+    onSelect: () => {
+      void deleteUser(user)
+    },
+  })
+
+  groups.push(extras)
 
   return groups
 }
@@ -116,6 +185,10 @@ const columns = computed<TableColumn<AdminUserListItem>[]>(() => [
   {
     accessorKey: 'emailVerified',
     header: 'Verificado',
+  },
+  {
+    accessorKey: 'deletedAt',
+    header: 'Estado',
   },
   {
     accessorKey: 'createdAt',
@@ -145,6 +218,7 @@ const columns = computed<TableColumn<AdminUserListItem>[]>(() => [
               Busca em e-mail ou nome; alteração de papel com efeito imediato no servidor.
             </p>
           </div>
+          <USwitch v-model="showDeleted" label="Mostrar desativados" />
         </div>
       </template>
 
@@ -167,6 +241,13 @@ const columns = computed<TableColumn<AdminUserListItem>[]>(() => [
               :color="row.original.emailVerified ? 'success' : 'neutral'"
               variant="subtle"
               :label="row.original.emailVerified ? 'Sim' : 'Não'"
+            />
+          </template>
+          <template #role-deletedAt="{ row }">
+            <UBadge
+              :color="row.original.deletedAt ? 'error' : 'success'"
+              variant="subtle"
+              :label="row.original.deletedAt ? 'Desativado' : 'Ativo'"
             />
           </template>
         </AtomsTable>

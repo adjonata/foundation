@@ -26,10 +26,22 @@ export function useAdminApi() {
   }
 
   function listUsers(
-    query?: Partial<Pick<AdminUsersQuery, 'page' | 'pageSize' | 'search'>>,
+    query?: Partial<Pick<AdminUsersQuery, 'page' | 'pageSize' | 'search' | 'showDeleted'>>,
   ): Promise<AdminUsersListResponse> {
     return execute(() =>
       $fetch<AdminUsersListResponse>('/api/protected/admin/users', withDefaults({ method: 'get', query })),
+    )
+  }
+
+  function deleteUser(userId: number): Promise<AdminUserListItem> {
+    return execute(() =>
+      $fetch<AdminUserListItem>(`/api/protected/admin/users/${userId}`, withDefaults({ method: 'delete' })),
+    )
+  }
+
+  function restoreUser(userId: number): Promise<AdminUserListItem> {
+    return execute(() =>
+      $fetch<AdminUserListItem>(`/api/protected/admin/users/${userId}/restore`, withDefaults({ method: 'patch' })),
     )
   }
 
@@ -65,6 +77,8 @@ export function useAdminApi() {
     listRolesWithPermissions,
     listUsers,
     updateUserRole,
+    deleteUser,
+    restoreUser,
     listSessions,
     revokeSession,
     resendVerificationForUser,

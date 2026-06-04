@@ -15,6 +15,7 @@ function toListItem(row: AdminListedUserRow): AdminUserListItem {
     name: row.name,
     role: row.role,
     emailVerified: row.emailVerifiedAt !== null,
+    deletedAt: row.deletedAt ? row.deletedAt.toISOString() : null,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
   }
@@ -27,6 +28,7 @@ export const adminUsersService = {
       search: query.search,
       skip,
       take: query.pageSize,
+      showDeleted: query.showDeleted,
     })
     const items = rows.map(toListItem)
     return buildPaginatedResult(items, total, query.page, query.pageSize)
@@ -46,5 +48,24 @@ export const adminUsersService = {
 
   async resendVerification(targetUserId: number) {
     return authService.resendVerification(targetUserId)
+  },
+
+  async restoreUser(targetUserId: number): Promise<AdminUserListItem> {
+    const result = await userRepository.restoreById(targetUserId)
+    if (!result.success) {
+      if (result.code === 'NOT_FOUND') throw new AppError('USER_NOT_FOUND', 'Utilizador nao encontrado', 404)
+      throw new AppError('ALREADY_ACTIVE', 'Utilizador ja esta ativo', 409)
+    }
+    return toListItem(result.row)
+  },
+
+  async deleteUser(targetUserId: number): Promise<AdminUserListItem> {
+    const result = await userRepository.softDeleteById(targetUserId)
+    if (!result.success) {
+      if (result.code === 'NOT_FOUND') throw new AppError('USER_NOT_FOUND', 'Utilizador nao encontrado', 404)
+      if (result.code === 'ALREADY_DELETED') throw new AppError('ALREADY_DELETED', 'Utilizador ja desativado', 409)
+      throw new AppError('LAST_SUPER_ADMIN', 'Nao e possivel desativar o ultimo SUPER_ADMIN do sistema', 409)
+    }
+    return toListItem(result.row)
   },
 }
