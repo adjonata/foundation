@@ -31,7 +31,7 @@
           </UFormField>
 
           <div class="flex justify-end">
-            <UButton variant="link" size="sm" class="h-auto p-0" disabled> Esqueci minha senha </UButton>
+            <UButton variant="link" size="sm" class="h-auto p-0" to="/esqueci-senha">Esqueci minha senha</UButton>
           </div>
 
           <UButton type="submit" class="w-full text-center justify-center" :loading="loading"> Entrar </UButton>
