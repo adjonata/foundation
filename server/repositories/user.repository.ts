@@ -15,26 +15,29 @@ const adminListSelect = {
   name: true,
   role: true,
   emailVerifiedAt: true,
+  deletedAt: true,
   createdAt: true,
   updatedAt: true,
 } satisfies Prisma.UserSelect
 
 export type AdminListedUserRow = Prisma.UserGetPayload<{ select: typeof adminListSelect }>
 
-function buildUserSearchWhere(search: string | undefined): Prisma.UserWhereInput {
-  if (!search) return {}
+function buildUserSearchWhere(search: string | undefined, showDeleted: boolean): Prisma.UserWhereInput {
+  const deletedFilter: Prisma.UserWhereInput = showDeleted ? {} : { deletedAt: null }
+  if (!search) return deletedFilter
   return {
+    ...deletedFilter,
     OR: [{ email: { contains: search, mode: 'insensitive' } }, { name: { contains: search, mode: 'insensitive' } }],
   }
 }
 
 export const userRepository = {
   findByEmail(email: string) {
-    return prisma.user.findUnique({ where: { email } })
+    return prisma.user.findFirst({ where: { email } })
   },
 
   findById(id: number) {
-    return prisma.user.findUnique({ where: { id } })
+    return prisma.user.findFirst({ where: { id, deletedAt: null } })
   },
 
   listAll() {
@@ -47,8 +50,8 @@ export const userRepository = {
   /**
    * Listagem para o painel admin: total + pagina, com busca opcional em email/nome.
    */
-  async listPaginatedForAdmin(params: { search?: string; skip: number; take: number }) {
-    const where = buildUserSearchWhere(params.search)
+  async listPaginatedForAdmin(params: { search?: string; skip: number; take: number; showDeleted?: boolean }) {
+    const where = buildUserSearchWhere(params.search, params.showDeleted ?? false)
 
     const [total, rows] = await prisma.$transaction([
       prisma.user.count({ where }),
@@ -94,7 +97,7 @@ export const userRepository = {
       }
 
       if (user.role === Role.SUPER_ADMIN && newRole !== Role.SUPER_ADMIN) {
-        const superAdminCount = await tx.user.count({ where: { role: Role.SUPER_ADMIN } })
+        const superAdminCount = await tx.user.count({ where: { role: Role.SUPER_ADMIN, deletedAt: null } })
         if (superAdminCount <= 1) {
           return { success: false as const, code: 'LAST_SUPER_ADMIN' as const }
         }
@@ -135,6 +138,55 @@ export const userRepository = {
     return prisma.user.update({
       where: { id },
       data: { passwordHash },
+    })
+  },
+
+  async restoreById(
+    userId: number,
+  ): Promise<{ success: true; row: AdminListedUserRow } | { success: false; code: 'NOT_FOUND' | 'ALREADY_ACTIVE' }> {
+    return prisma.$transaction(async (tx) => {
+      const user = await tx.user.findUnique({
+        where: { id: userId },
+        select: { id: true, deletedAt: true },
+      })
+      if (!user) return { success: false as const, code: 'NOT_FOUND' as const }
+      if (!user.deletedAt) return { success: false as const, code: 'ALREADY_ACTIVE' as const }
+      const row = await tx.user.update({
+        where: { id: userId },
+        data: { deletedAt: null },
+        select: adminListSelect,
+      })
+      return { success: true as const, row }
+    })
+  },
+
+  async softDeleteById(
+    userId: number,
+  ): Promise<
+    | { success: true; row: AdminListedUserRow }
+    | { success: false; code: 'NOT_FOUND' | 'ALREADY_DELETED' | 'LAST_SUPER_ADMIN' }
+  > {
+    return prisma.$transaction(async (tx) => {
+      const user = await tx.user.findUnique({
+        where: { id: userId },
+        select: { id: true, role: true, deletedAt: true },
+      })
+      if (!user) return { success: false as const, code: 'NOT_FOUND' as const }
+      if (user.deletedAt) return { success: false as const, code: 'ALREADY_DELETED' as const }
+      if (user.role === Role.SUPER_ADMIN) {
+        const count = await tx.user.count({ where: { role: Role.SUPER_ADMIN, deletedAt: null } })
+        if (count <= 1) return { success: false as const, code: 'LAST_SUPER_ADMIN' as const }
+      }
+      const row = await tx.user.update({
+        where: { id: userId },
+        data: { deletedAt: new Date() },
+        select: adminListSelect,
+      })
+      await tx.authSession.updateMany({
+        where: { userId, revokedAt: null },
+        data: { revokedAt: new Date() },
+      })
+      return { success: true as const, row }
     })
   },
 }

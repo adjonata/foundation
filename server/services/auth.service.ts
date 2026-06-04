@@ -140,7 +140,7 @@ export const authService = {
 
   async login(input: LoginInput) {
     const user = await userRepository.findByEmail(input.email)
-    if (!user) {
+    if (!user || user.deletedAt) {
       throw new AppError('INVALID_CREDENTIALS', 'Credenciais invalidas', 401)
     }
 
@@ -300,7 +300,7 @@ export const authService = {
     const user = await userRepository.findByEmail(email)
 
     // Não revelar se o e-mail existe ou não — resposta sempre neutra.
-    if (!user) return
+    if (!user || user.deletedAt) return
 
     const rawToken = randomBytes(32).toString('hex')
     const tokenHash = hashToken(rawToken)

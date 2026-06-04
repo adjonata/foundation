@@ -6,6 +6,8 @@ export const PERMISSIONS = {
   ADMIN_USERS_READ: 'admin.users.read',
   ADMIN_USERS_ROLE_UPDATE: 'admin.users.role.update',
   ADMIN_USERS_RESEND_VERIFICATION: 'admin.users.resend-verification',
+  ADMIN_USERS_DELETE: 'admin.users.delete',
+  ADMIN_USERS_RESTORE: 'admin.users.restore',
   ADMIN_SESSIONS_READ: 'admin.sessions.read',
   ADMIN_SESSIONS_REVOKE: 'admin.sessions.revoke',
 } as const
@@ -22,9 +24,14 @@ export const PERMISSION_DEFINITIONS: PermissionDefinition[] = [
   { name: PERMISSIONS.ADMIN_ROLES_READ, description: 'Permite listar papéis e permissões do painel admin' },
   { name: PERMISSIONS.ADMIN_USERS_READ, description: 'Permite listar utilizadores no painel admin' },
   { name: PERMISSIONS.ADMIN_USERS_ROLE_UPDATE, description: 'Permite alterar papel de utilizador no painel admin' },
-  { name: PERMISSIONS.ADMIN_USERS_RESEND_VERIFICATION, description: 'Permite reenviar e-mail de verificacao para utilizadores no painel admin' },
+  {
+    name: PERMISSIONS.ADMIN_USERS_RESEND_VERIFICATION,
+    description: 'Permite reenviar e-mail de verificacao para utilizadores no painel admin',
+  },
   { name: PERMISSIONS.ADMIN_SESSIONS_READ, description: 'Permite listar sessões ativas no painel admin' },
   { name: PERMISSIONS.ADMIN_SESSIONS_REVOKE, description: 'Permite revogar sessões no painel admin' },
+  { name: PERMISSIONS.ADMIN_USERS_DELETE, description: 'Permite desativar (soft delete) utilizadores no painel admin' },
+  { name: PERMISSIONS.ADMIN_USERS_RESTORE, description: 'Permite reativar utilizadores desativados no painel admin' },
 ]
 
 export const ROLE_PERMISSIONS: Record<Role, PermissionName[]> = {

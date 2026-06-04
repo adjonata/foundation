@@ -153,17 +153,20 @@ Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (regist
 
 ### Back
 
-- [ ] Campo `deletedAt DateTime?` nos models principais (`User`)
-- [ ] Migration
-- [ ] Helper `softDelete(model, id)` reutilizável
-- [ ] Filtro `where: { deletedAt: null }` automático nas queries dos repositories
-- [ ] Rota `DELETE /api/protected/admin/users/:id` — soft delete de usuário
+- [x] Campo `deletedAt DateTime?` no model `User`
+- [x] Migration
+- [x] `findByEmail` e `findById` filtram utilizadores desativados (bloqueia login e acesso a rotas protegidas)
+- [x] `login()` rejeita credenciais de utilizadores desativados com `INVALID_CREDENTIALS`
+- [x] Rota `DELETE /api/protected/admin/users/:id` — desativa utilizador e revoga sessões (requer `ADMIN_USERS_DELETE`)
+- [x] Rota `PATCH /api/protected/admin/users/:id/restore` — reativa utilizador desativado (requer `ADMIN_USERS_RESTORE`)
+- [x] Proteção do último `SUPER_ADMIN` ativo tanto no soft delete como na alteração de papel
 
 ### Front
 
-- [ ] Ação de desativar usuário na página `/admin/users`
-- [ ] Filtro de mostrar/ocultar usuários desativados
-- [ ] Indicador visual de usuário desativado na tabela
+- [x] Ação "Desativar conta" por linha em `/admin/users` (oculta para utilizadores já desativados)
+- [x] Ação "Reativar conta" por linha em `/admin/users` (visível apenas para utilizadores desativados)
+- [x] Toggle "Mostrar desativados" no cabeçalho da tabela (reset para página 1 ao alternar)
+- [x] Coluna "Estado" com badge Ativo/Desativado
 
 ---
 
