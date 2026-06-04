@@ -92,10 +92,75 @@ POST {{baseUrl}}/api/auth/refresh
 POST {{baseUrl}}/api/auth/refresh
 
 # =============================================================================
-# Fluxo 4 — Erros de autenticação
+# Fluxo 4 — Reset de senha
 # =============================================================================
 
-### 4.1 Login com senha errada → 401 INVALID_CREDENTIALS
+### 4.1 Solicitar reset (e-mail existente — recebe link por e-mail)
+POST {{baseUrl}}/api/auth/forgot-password
+Content-Type: application/json
+
+{
+  "email": "{{$dotenv TEST_EMAIL}}"
+}
+
+### 4.2 Solicitar reset (e-mail inexistente — resposta neutra, sem revelar existência)
+POST {{baseUrl}}/api/auth/forgot-password
+Content-Type: application/json
+
+{
+  "email": "naoexiste@teste.dev"
+}
+
+### 4.3 Redefinir senha (substitua TOKEN pelo valor recebido no e-mail)
+POST {{baseUrl}}/api/auth/reset-password
+Content-Type: application/json
+
+{
+  "token": "SUBSTITUA_PELO_TOKEN_DO_EMAIL",
+  "password": "novaSenha123"
+}
+
+### 4.4 Mesmo token novamente → 400 TOKEN_USED
+POST {{baseUrl}}/api/auth/reset-password
+Content-Type: application/json
+
+{
+  "token": "SUBSTITUA_PELO_TOKEN_DO_EMAIL",
+  "password": "outraSenha456"
+}
+
+### 4.5 Token expirado → 400 TOKEN_EXPIRED
+POST {{baseUrl}}/api/auth/reset-password
+Content-Type: application/json
+
+{
+  "token": "token-invalido-qualquer",
+  "password": "novaSenha123"
+}
+
+### 4.6 Senha curta → 422 validação Zod
+POST {{baseUrl}}/api/auth/reset-password
+Content-Type: application/json
+
+{
+  "token": "SUBSTITUA_PELO_TOKEN_DO_EMAIL",
+  "password": "123"
+}
+
+### 4.7 Login com nova senha após reset (sessões antigas foram revogadas)
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{$dotenv TEST_EMAIL}}",
+  "password": "novaSenha123"
+}
+
+# =============================================================================
+# Fluxo 5 — Erros de autenticação
+# =============================================================================
+
+### 5.1 Login com senha errada → 401 INVALID_CREDENTIALS
 POST {{baseUrl}}/api/auth/login
 Content-Type: application/json
 
@@ -104,7 +169,7 @@ Content-Type: application/json
   "password": "senha-errada"
 }
 
-### 4.2 Login com e-mail inexistente → 401 INVALID_CREDENTIALS (mesma mensagem)
+### 5.2 Login com e-mail inexistente → 401 INVALID_CREDENTIALS (mesma mensagem)
 POST {{baseUrl}}/api/auth/login
 Content-Type: application/json
 
@@ -113,7 +178,7 @@ Content-Type: application/json
   "password": "qualquer"
 }
 
-### 4.3 Register com e-mail já cadastrado → 409 EMAIL_IN_USE
+### 5.3 Register com e-mail já cadastrado → 409 EMAIL_IN_USE
 POST {{baseUrl}}/api/auth/register
 Content-Type: application/json
 
@@ -123,7 +188,7 @@ Content-Type: application/json
   "password": "senha123456"
 }
 
-### 4.4 Register com body inválido (senha curta) → 422 validação Zod
+### 5.4 Register com body inválido (senha curta) → 422 validação Zod
 POST {{baseUrl}}/api/auth/register
 Content-Type: application/json
 

@@ -17,6 +17,27 @@ function getAppUrl() {
   return url.replace(/\/$/, '')
 }
 
+export async function sendPasswordResetEmail(to: string, rawToken: string) {
+  const resend = getResend()
+  const url = `${getAppUrl()}/redefinir-senha?token=${rawToken}`
+  const { error } = await resend.emails.send({
+    from: getEmailFrom(),
+    to,
+    subject: 'Redefinição de senha',
+    html: `
+      <p>Olá,</p>
+      <p>Clique no link abaixo para redefinir sua senha. O link expira em <strong>1 hora</strong>.</p>
+      <p><a href="${url}">${url}</a></p>
+      <p>Se você não solicitou a redefinição, ignore este e-mail.</p>
+    `,
+  })
+
+  if (error) {
+    console.error('[email] Resend retornou erro:', JSON.stringify(error))
+    throw new AppError('EMAIL_SEND_FAILED', 'Falha ao enviar e-mail de redefinicao de senha', 500)
+  }
+}
+
 export async function sendVerificationEmail(to: string, rawToken: string) {
   const resend = getResend()
   const url = `${getAppUrl()}/verificar-email?token=${rawToken}`

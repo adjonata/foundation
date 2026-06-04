@@ -130,4 +130,11 @@ export const userRepository = {
       data: { emailVerifiedAt: new Date() },
     })
   },
+
+  updatePassword(id: number, passwordHash: string) {
+    return prisma.user.update({
+      where: { id },
+      data: { passwordHash },
+    })
+  },
 }

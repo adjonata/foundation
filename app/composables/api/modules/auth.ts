@@ -48,6 +48,20 @@ export function useAuthApi() {
     return execute(() => $fetch<{ sent: boolean }>('/api/auth/resend-verification', withDefaults({ method: 'post' })))
   }
 
+  function forgotPassword(body: { email: string }): Promise<{ message: string }> {
+    return execute(
+      () => $fetch<{ message: string }>('/api/auth/forgot-password', withDefaults({ method: 'post', body })),
+      { retryOn401: false },
+    )
+  }
+
+  function resetPassword(body: { token: string; password: string }): Promise<{ message: string }> {
+    return execute(
+      () => $fetch<{ message: string }>('/api/auth/reset-password', withDefaults({ method: 'post', body })),
+      { retryOn401: false },
+    )
+  }
+
   return {
     me,
     login,
@@ -56,5 +70,7 @@ export function useAuthApi() {
     refresh,
     verifyEmail,
     resendVerification,
+    forgotPassword,
+    resetPassword,
   }
 }

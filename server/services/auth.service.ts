@@ -2,15 +2,17 @@ import { createHash, randomBytes } from 'node:crypto'
 import type { LoginInput, RegisterInput } from '#shared/schemas/auth'
 import type { AuthUser } from '#shared/types/user'
 import { emailVerificationRepository } from '../repositories/email-verification.repository'
+import { passwordResetRepository } from '../repositories/password-reset.repository'
 import { authRepository } from '../repositories/auth.repository'
 import { userRepository } from '../repositories/user.repository'
 import { prisma } from '../utils/db'
 import { AppError } from '../utils/errors'
-import { sendVerificationEmail } from '../utils/email'
+import { sendPasswordResetEmail, sendVerificationEmail } from '../utils/email'
 import { refreshTokenTtl, signAccessToken, signRefreshToken, verifyToken } from '../utils/jwt'
 import { hashPassword, verifyPassword } from '../utils/password'
 
 const EMAIL_VERIFICATION_TTL_MS = 24 * 60 * 60 * 1000 // 24h
+const PASSWORD_RESET_TTL_MS = 60 * 60 * 1000 // 1h
 
 function hashToken(token: string) {
   return createHash('sha256').update(token).digest('hex')
@@ -43,7 +45,13 @@ async function handleRefreshTokenReuse(refreshToken: string, cause: unknown) {
   throw new AppError('REFRESH_TOKEN_REUSE', 'Reutilizacao de refresh token detectada', 401)
 }
 
-function sanitizeUser(user: { id: number; email: string; name: string | null; role: string; emailVerifiedAt: Date | null }): AuthUser {
+function sanitizeUser(user: {
+  id: number
+  email: string
+  name: string | null
+  role: string
+  emailVerifiedAt: Date | null
+}): AuthUser {
   return {
     id: user.id,
     email: user.email,
@@ -286,5 +294,58 @@ export const authService = {
 
     const rawToken = await issueVerificationToken(user.id)
     await sendVerificationEmail(user.email, rawToken)
+  },
+
+  async forgotPassword(email: string) {
+    const user = await userRepository.findByEmail(email)
+
+    // Não revelar se o e-mail existe ou não — resposta sempre neutra.
+    if (!user) return
+
+    const rawToken = randomBytes(32).toString('hex')
+    const tokenHash = hashToken(rawToken)
+    const expiresAt = new Date(Date.now() + PASSWORD_RESET_TTL_MS)
+
+    await prisma.$transaction([
+      prisma.passwordResetToken.deleteMany({ where: { userId: user.id } }),
+      prisma.passwordResetToken.create({ data: { userId: user.id, tokenHash, expiresAt } }),
+    ])
+
+    await sendPasswordResetEmail(user.email, rawToken)
+  },
+
+  async resetPassword(rawToken: string, newPassword: string) {
+    const tokenHash = hashToken(rawToken)
+    const record = await passwordResetRepository.findByTokenHash(tokenHash)
+
+    if (!record) {
+      throw new AppError('INVALID_TOKEN', 'Token invalido', 400)
+    }
+    if (record.usedAt) {
+      throw new AppError('TOKEN_USED', 'Token ja utilizado', 400)
+    }
+    if (record.expiresAt < new Date()) {
+      throw new AppError('TOKEN_EXPIRED', 'Token expirado', 400)
+    }
+
+    const passwordHash = await hashPassword(newPassword)
+
+    // Transação: marcar token como usado + atualizar senha + revogar todas as sessões.
+    // O updateMany com where usedAt:null é a "trava" — apenas um request concorrente
+    // consegue marcar o token; os demais recebem count:0 e são rejeitados.
+    await prisma.$transaction(async (tx) => {
+      const marked = await tx.passwordResetToken.updateMany({
+        where: { id: record.id, usedAt: null },
+        data: { usedAt: new Date() },
+      })
+      if (marked.count === 0) {
+        throw new AppError('TOKEN_USED', 'Token ja utilizado', 400)
+      }
+      await tx.user.update({ where: { id: record.userId }, data: { passwordHash } })
+      await tx.authSession.updateMany({
+        where: { userId: record.userId, revokedAt: null },
+        data: { revokedAt: new Date() },
+      })
+    })
   },
 }
