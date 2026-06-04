@@ -134,18 +134,18 @@ Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (regist
 
 ### Back
 
-- [ ] Model `PasswordResetToken` (`userId`, `tokenHash`, `expiresAt`, `usedAt`)
-- [ ] Migration
-- [ ] Rota `POST /api/auth/forgot-password` — gera e envia token por e-mail
-- [ ] Rota `POST /api/auth/reset-password` — valida token, atualiza senha e invalida token
-- [ ] Expiração de token em 1 hora
-- [ ] Revogar todas as sessões ativas após reset
+- [x] Model `PasswordResetToken` (`userId`, `tokenHash`, `expiresAt`, `usedAt`)
+- [x] Migration
+- [x] Rota `POST /api/auth/forgot-password` — gera e envia token por e-mail
+- [x] Rota `POST /api/auth/reset-password` — valida token, atualiza senha e invalida token
+- [x] Expiração de token em 1 hora
+- [x] Revogar todas as sessões ativas após reset
 
 ### Front
 
-- [ ] Página `/auth/forgot-password` — formulário de e-mail
-- [ ] Página `/auth/reset-password?token=...` — formulário de nova senha
-- [ ] Feedback de sucesso e redirecionamento para login
+- [x] Página `/esqueci-senha` — formulário de e-mail
+- [x] Página `/redefinir-senha?token=...` — formulário de nova senha
+- [x] Feedback de sucesso e redirecionamento para login
 
 ---
 
