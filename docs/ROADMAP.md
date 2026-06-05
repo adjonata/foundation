@@ -177,13 +177,13 @@ Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (regist
 - [x] Model `AuditLog` (`actorId`, `action`, `entity`, `entityId`, `metadata JSON`, `createdAt`)
 - [x] Migration
 - [x] Helper `audit({ event, actorId, entityId?, metadata? })` em `server/utils/` com catálogo tipado de eventos em `server/utils/auditEvents.ts`
-- [x] Log automático nas ações críticas: login, logout, alteração de role, deleção, reset de senha
-- [x] Rota `GET /api/protected/admin/audit-logs` — listagem com filtros e paginação
+- [x] 12 eventos auditados: `LOGIN`, `LOGOUT`, `REGISTERED`, `EMAIL_VERIFIED`, `VERIFICATION_RESENT`, `PASSWORD_RESET_REQUESTED`, `PASSWORD_RESET`, `ROLE_CHANGED`, `DELETED`, `RESTORED`, `SESSION_REVOKED`, `TOKEN_REUSE_DETECTED`
+- [x] Rota `GET /api/protected/admin/audit-logs` — listagem com filtros por ação, entidade, intervalo de datas e paginação
 
 ### Front
 
-- [ ] Página `/admin/audit-logs` — tabela com filtros por usuário, ação e data
-- [ ] Formatação legível de cada tipo de ação
+- [x] Página `/admin/audit-logs` — tabela com filtros por ação, entidade e intervalo de datas
+- [x] Coluna de detalhes com metadados formatados (ex: `from: USER → to: ADMIN`)
 
 ---
 
