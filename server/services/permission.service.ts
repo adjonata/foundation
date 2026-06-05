@@ -6,7 +6,7 @@ export const permissionService = {
     return permissionRepository.listAll()
   },
 
-  async listPermissionsByRole(role: Role) {
+  async listPermissionsByRole({ role }: { role: Role }) {
     return permissionRepository.listByRole(role)
   },
 

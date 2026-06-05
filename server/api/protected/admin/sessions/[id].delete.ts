@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
   try {
     requirePermission(event, PERMISSIONS.ADMIN_SESSIONS_REVOKE)
     const id = adminSessionIdParamSchema.parse(getRouterParam(event, 'id'))
-    await adminSessionsService.revokeSession(id)
+    await adminSessionsService.revokeSession({ sessionId: id })
     setResponseStatus(event, 204)
   } catch (error) {
     throw toHttpError(error)

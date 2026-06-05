@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
   try {
     requirePermission(event, PERMISSIONS.ADMIN_USERS_RESEND_VERIFICATION)
     const id = adminUserIdParamSchema.parse(getRouterParam(event, 'id'))
-    await adminUsersService.resendVerification(id)
+    await adminUsersService.resendVerification({ targetUserId: id })
     return ok({ sent: true })
   } catch (error) {
     throw toHttpError(error)

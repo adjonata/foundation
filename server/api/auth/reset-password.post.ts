@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
     const body = await readBody(event)
     const { token, password } = resetPasswordBodySchema.parse(body)
 
-    await authService.resetPassword(token, password)
+    await authService.resetPassword({ rawToken: token, newPassword: password })
 
     return ok({ message: 'Senha redefinida com sucesso. Todas as sessoes foram encerradas.' })
   } catch (error) {

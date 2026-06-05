@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
     const body = await readBody(event)
     const { token } = bodySchema.parse(body)
 
-    const user = await authService.verifyEmail(token)
+    const user = await authService.verifyEmail({ rawToken: token })
 
     return ok(user)
   } catch (error) {

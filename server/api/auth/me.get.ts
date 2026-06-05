@@ -6,7 +6,7 @@ import { ok } from '../../utils/response'
 export default defineEventHandler(async (event) => {
   try {
     const token = getAccessTokenFromCookie(event)
-    const user = await authService.getMe(token)
+    const user = await authService.getMe({ accessToken: token })
     return ok(user)
   } catch (error) {
     throw toHttpError(error)

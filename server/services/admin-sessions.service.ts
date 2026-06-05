@@ -31,8 +31,7 @@ export const adminSessionsService = {
     return buildPaginatedResult(items, total, query.page, query.pageSize)
   },
 
-  /** Revoga uma sessao pelo id numerico (`revokedAt`); 404 se nao existir. */
-  async revokeSession(sessionId: number): Promise<void> {
+  async revokeSession({ sessionId }: { sessionId: number }): Promise<void> {
     const result = await authSessionRepository.revokeById(sessionId)
     if (result === 'NOT_FOUND') {
       throw new AppError('SESSION_NOT_FOUND', 'Sessao nao encontrada', 404)
