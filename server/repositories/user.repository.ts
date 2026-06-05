@@ -75,7 +75,7 @@ export const userRepository = {
     userId: number,
     newRole: Role,
   ): Promise<
-    | { success: true; row: AdminListedUserRow }
+    | { success: true; row: AdminListedUserRow; previousRole: Role }
     | { success: false; code: 'NOT_FOUND' }
     | { success: false; code: 'LAST_SUPER_ADMIN' }
   > {
@@ -93,7 +93,7 @@ export const userRepository = {
           where: { id: userId },
           select: adminListSelect,
         })
-        return { success: true as const, row: row! }
+        return { success: true as const, row: row!, previousRole: user.role }
       }
 
       if (user.role === Role.SUPER_ADMIN && newRole !== Role.SUPER_ADMIN) {
@@ -108,7 +108,7 @@ export const userRepository = {
         data: { role: newRole },
         select: adminListSelect,
       })
-      return { success: true as const, row }
+      return { success: true as const, row, previousRole: user.role }
     })
   },
 

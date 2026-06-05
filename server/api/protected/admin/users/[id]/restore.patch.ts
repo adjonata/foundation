@@ -10,9 +10,9 @@ const idParamSchema = z.coerce.number().int().positive()
 
 export default defineEventHandler(async (event) => {
   try {
-    requirePermission(event, PERMISSIONS.ADMIN_USERS_RESTORE)
+    const auth = requirePermission(event, PERMISSIONS.ADMIN_USERS_RESTORE)
     const id = idParamSchema.parse(getRouterParam(event, 'id'))
-    const user = await adminUsersService.restoreUser(id)
+    const user = await adminUsersService.restoreUser({ targetUserId: id, actorId: auth.userId })
     return ok(user)
   } catch (error) {
     throw toHttpError(error)

@@ -1,0 +1,28 @@
+# Execute o login em auth.http antes — o cookie de sessão é compartilhado por host.
+
+@baseUrl = {{$dotenv BASE_URL}}
+
+# =============================================================================
+# Fluxo 7 — Admin: audit logs
+# =============================================================================
+
+### 7.1 Listar todos os audit logs (paginado)
+GET {{baseUrl}}/api/protected/admin/audit-logs
+
+### 7.2 Filtrar por ação
+GET {{baseUrl}}/api/protected/admin/audit-logs?action=LOGIN
+
+### 7.3 Filtrar por entidade
+GET {{baseUrl}}/api/protected/admin/audit-logs?entity=User
+
+### 7.4 Filtrar por actor (substitua ID)
+GET {{baseUrl}}/api/protected/admin/audit-logs?actorId=1
+
+### 7.5 Filtrar por intervalo de datas
+GET {{baseUrl}}/api/protected/admin/audit-logs?from=2026-01-01T00:00:00Z&to=2026-12-31T23:59:59Z
+
+### 7.6 Combinar filtros + paginação
+GET {{baseUrl}}/api/protected/admin/audit-logs?action=ROLE_CHANGED&page=1&pageSize=5
+
+### 7.7 Acessar como USER comum (faça login como user@starter.dev antes) → 403
+GET {{baseUrl}}/api/protected/admin/audit-logs

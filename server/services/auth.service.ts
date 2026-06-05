@@ -10,6 +10,7 @@ import { AppError } from '../utils/errors'
 import { sendPasswordResetEmail, sendVerificationEmail } from '../utils/email'
 import { refreshTokenTtl, signAccessToken, signRefreshToken, verifyToken } from '../utils/jwt'
 import { hashPassword, verifyPassword } from '../utils/password'
+import { audit } from '../utils/audit'
 
 const EMAIL_VERIFICATION_TTL_MS = 24 * 60 * 60 * 1000 // 24h
 const PASSWORD_RESET_TTL_MS = 60 * 60 * 1000 // 1h
@@ -151,13 +152,15 @@ export const authService = {
 
     const tokens = await issueTokenPair(user)
 
+    await audit({ event: 'USER_LOGIN', actorId: user.id, entityId: String(user.id) })
+
     return {
       user: sanitizeUser(user),
       ...tokens,
     }
   },
 
-  async refresh(refreshToken: string) {
+  async refresh({ refreshToken }: { refreshToken: string }) {
     let payload: Awaited<ReturnType<typeof verifyToken>> | null = null
     try {
       payload = await verifyToken(refreshToken, 'refresh')
@@ -207,7 +210,7 @@ export const authService = {
     }
   },
 
-  async logout(refreshToken?: string) {
+  async logout({ refreshToken }: { refreshToken?: string }) {
     if (!refreshToken) return
 
     try {
@@ -215,12 +218,14 @@ export const authService = {
       const sessionId = Number(payload.sessionId)
       if (!Number.isFinite(sessionId)) return
       await authRepository.revokeSession(sessionId)
+      const userId = Number(payload.sub)
+      await audit({ event: 'USER_LOGOUT', actorId: userId, entityId: String(userId) })
     } catch {
       // Token invalido no logout nao deve quebrar resposta.
     }
   },
 
-  async getMe(accessToken: string | undefined) {
+  async getMe({ accessToken }: { accessToken: string | undefined }) {
     if (!accessToken) {
       throw new AppError('UNAUTHORIZED', 'Nao autenticado', 401)
     }
@@ -252,7 +257,7 @@ export const authService = {
     return sanitizeUser(user)
   },
 
-  async verifyEmail(rawToken: string) {
+  async verifyEmail({ rawToken }: { rawToken: string }) {
     const tokenHash = hashToken(rawToken)
     const record = await emailVerificationRepository.findByTokenHash(tokenHash)
 
@@ -283,7 +288,7 @@ export const authService = {
     return sanitizeUser(user)
   },
 
-  async resendVerification(userId: number) {
+  async resendVerification({ userId }: { userId: number }) {
     const user = await userRepository.findById(userId)
     if (!user) {
       throw new AppError('NOT_FOUND', 'Usuario nao encontrado', 404)
@@ -296,7 +301,7 @@ export const authService = {
     await sendVerificationEmail(user.email, rawToken)
   },
 
-  async forgotPassword(email: string) {
+  async forgotPassword({ email }: { email: string }) {
     const user = await userRepository.findByEmail(email)
 
     // Não revelar se o e-mail existe ou não — resposta sempre neutra.
@@ -314,7 +319,7 @@ export const authService = {
     await sendPasswordResetEmail(user.email, rawToken)
   },
 
-  async resetPassword(rawToken: string, newPassword: string) {
+  async resetPassword({ rawToken, newPassword }: { rawToken: string; newPassword: string }) {
     const tokenHash = hashToken(rawToken)
     const record = await passwordResetRepository.findByTokenHash(tokenHash)
 
@@ -347,5 +352,7 @@ export const authService = {
         data: { revokedAt: new Date() },
       })
     })
+
+    await audit({ event: 'PASSWORD_RESET', actorId: record.userId, entityId: String(record.userId) })
   },
 }

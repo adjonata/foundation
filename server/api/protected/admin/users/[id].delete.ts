@@ -10,9 +10,9 @@ const idParamSchema = z.coerce.number().int().positive()
 
 export default defineEventHandler(async (event) => {
   try {
-    requirePermission(event, PERMISSIONS.ADMIN_USERS_DELETE)
+    const auth = requirePermission(event, PERMISSIONS.ADMIN_USERS_DELETE)
     const id = idParamSchema.parse(getRouterParam(event, 'id'))
-    const user = await adminUsersService.deleteUser(id)
+    const user = await adminUsersService.deleteUser({ targetUserId: id, actorId: auth.userId })
     return ok(user)
   } catch (error) {
     throw toHttpError(error)

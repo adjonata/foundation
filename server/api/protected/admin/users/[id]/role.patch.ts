@@ -9,11 +9,11 @@ import { Role } from '../../../../../../prisma/generated/client'
 
 export default defineEventHandler(async (event) => {
   try {
-    requirePermission(event, PERMISSIONS.ADMIN_USERS_ROLE_UPDATE)
+    const auth = requirePermission(event, PERMISSIONS.ADMIN_USERS_ROLE_UPDATE)
     const id = adminUserIdParamSchema.parse(getRouterParam(event, 'id'))
     const body = adminUserRoleUpdateBodySchema.parse(await readBody(event))
     const newRole = body.role as Role
-    const user = await adminUsersService.updateUserRole(id, newRole)
+    const user = await adminUsersService.updateUserRole({ targetUserId: id, newRole, actorId: auth.userId })
     return ok(user)
   } catch (error) {
     throw toHttpError(error)
