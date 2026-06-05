@@ -10,28 +10,25 @@ const toast = useToast()
 const showDeleted = ref(false)
 
 const { pagination, items, loading, requestError, upaginationProps, totalCount, pageRangeLabel, goToFirstPage } =
-  usePaginated<
-  AdminUserListItem,
-  Record<string, never>
->({
-  initialPagination: { search: '' },
-  debounceSearchMs: 400,
-  autoExecute: true,
-  onRequestError: (message) => {
-    toast.add({
-      title: 'Erro ao carregar utilizadores',
-      description: message,
-      color: 'error',
-    })
-  },
-  request: (p) =>
-    api.admin.listUsers({
-      page: p.page,
-      pageSize: p.pageSize,
-      search: p.search || undefined,
-      showDeleted: showDeleted.value,
-    }),
-})
+  usePaginated<AdminUserListItem, Record<string, never>>({
+    initialPagination: { search: '' },
+    debounceSearchMs: 400,
+    autoExecute: true,
+    onRequestError: (message) => {
+      toast.add({
+        title: 'Erro ao carregar utilizadores',
+        description: message,
+        color: 'error',
+      })
+    },
+    request: (p) =>
+      api.admin.listUsers({
+        page: p.page,
+        pageSize: p.pageSize,
+        search: p.search || undefined,
+        showDeleted: showDeleted.value,
+      }),
+  })
 
 watch(showDeleted, () => goToFirstPage())
 

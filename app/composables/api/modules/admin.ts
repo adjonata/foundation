@@ -1,4 +1,6 @@
 import type {
+  AdminAuditLogItem,
+  AdminAuditLogsListResponse,
   AdminPermission,
   AdminRoleWithPermissions,
   AdminSessionListItem,
@@ -9,6 +11,7 @@ import type {
 import type { AdminUserRoleUpdateBody } from '#shared/schemas/admin-user-role.patch'
 import type { AdminSessionsQuery } from '#shared/schemas/admin-sessions.query'
 import type { AdminUsersQuery } from '#shared/schemas/admin-users.query'
+import type { AdminAuditLogsQuery } from '#shared/schemas/admin-audit-logs.query'
 import { useApiBase } from '../base'
 
 /** Chamadas à API administrativa (requer sessão + papel com permissão). */
@@ -72,6 +75,14 @@ export function useAdminApi() {
     )
   }
 
+  function listAuditLogs(
+    query?: Partial<Pick<AdminAuditLogsQuery, 'page' | 'pageSize' | 'action' | 'entity' | 'from' | 'to'>>,
+  ): Promise<AdminAuditLogsListResponse> {
+    return execute(() =>
+      $fetch<AdminAuditLogsListResponse>('/api/protected/admin/audit-logs', withDefaults({ method: 'get', query })),
+    )
+  }
+
   return {
     listPermissions,
     listRolesWithPermissions,
@@ -82,5 +93,6 @@ export function useAdminApi() {
     listSessions,
     revokeSession,
     resendVerificationForUser,
+    listAuditLogs,
   }
 }

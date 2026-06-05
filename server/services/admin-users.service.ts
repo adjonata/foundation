@@ -61,8 +61,9 @@ export const adminUsersService = {
     return toListItem(result.row)
   },
 
-  async resendVerification({ targetUserId }: { targetUserId: number }) {
-    return authService.resendVerification({ userId: targetUserId })
+  async resendVerification({ targetUserId, actorId }: { targetUserId: number; actorId: number }) {
+    await authService.resendVerification({ userId: targetUserId })
+    await audit({ event: 'VERIFICATION_RESENT', actorId, entityId: String(targetUserId) })
   },
 
   async restoreUser({ targetUserId, actorId }: { targetUserId: number; actorId: number }): Promise<AdminUserListItem> {

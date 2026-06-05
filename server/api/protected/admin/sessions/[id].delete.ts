@@ -7,9 +7,9 @@ import { requirePermission } from '../../../../utils/requirePermission'
 
 export default defineEventHandler(async (event) => {
   try {
-    requirePermission(event, PERMISSIONS.ADMIN_SESSIONS_REVOKE)
+    const auth = requirePermission(event, PERMISSIONS.ADMIN_SESSIONS_REVOKE)
     const id = adminSessionIdParamSchema.parse(getRouterParam(event, 'id'))
-    await adminSessionsService.revokeSession({ sessionId: id })
+    await adminSessionsService.revokeSession({ sessionId: id, actorId: auth.userId })
     setResponseStatus(event, 204)
   } catch (error) {
     throw toHttpError(error)

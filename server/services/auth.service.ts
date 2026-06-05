@@ -43,6 +43,7 @@ async function handleRefreshTokenReuse(refreshToken: string, cause: unknown) {
 
   // Sessao ativa + JWT estruturalmente invalido = sinal de adulteracao — revogar tudo.
   await authRepository.revokeAllUserSessions(session.userId)
+  await audit({ event: 'REFRESH_TOKEN_REUSE_DETECTED', actorId: session.userId, entityId: String(session.id) })
   throw new AppError('REFRESH_TOKEN_REUSE', 'Reutilizacao de refresh token detectada', 401)
 }
 
@@ -132,6 +133,8 @@ export const authService = {
     }
 
     const tokens = await issueTokenPair(user)
+
+    await audit({ event: 'USER_REGISTERED', actorId: user.id, entityId: String(user.id) })
 
     return {
       user: sanitizeUser({ ...user, emailVerifiedAt: null }),
@@ -285,6 +288,8 @@ export const authService = {
       prisma.user.update({ where: { id: record.userId }, data: { emailVerifiedAt: new Date() } }),
     ])
 
+    await audit({ event: 'EMAIL_VERIFIED', actorId: record.userId, entityId: String(record.userId) })
+
     return sanitizeUser(user)
   },
 
@@ -317,6 +322,7 @@ export const authService = {
     ])
 
     await sendPasswordResetEmail(user.email, rawToken)
+    await audit({ event: 'PASSWORD_RESET_REQUESTED', actorId: user.id, entityId: String(user.id) })
   },
 
   async resetPassword({ rawToken, newPassword }: { rawToken: string; newPassword: string }) {
