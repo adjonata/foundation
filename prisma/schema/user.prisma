@@ -15,6 +15,7 @@ model User {
   authSessions            AuthSession[]
   emailVerificationTokens EmailVerificationToken[]
   passwordResetTokens     PasswordResetToken[]
+  auditLogs               AuditLog[]
   createdAt               DateTime                 @default(now())
   updatedAt               DateTime                 @updatedAt
 }

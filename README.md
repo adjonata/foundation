@@ -99,6 +99,8 @@ Acesse em `http://localhost:3000`
 | `GET`  | `/api/auth/me`                  | Retornar utilizador autenticado da sessão atual (sanitizado, sem senha) |
 | `POST` | `/api/auth/verify-email`        | Verificar e-mail com token recebido por e-mail (TTL: 24h)               |
 | `POST` | `/api/auth/resend-verification` | Reenviar e-mail de verificação (requer autenticação)                    |
+| `POST` | `/api/auth/forgot-password`     | Solicitar reset de senha por e-mail (TTL: 1h)                           |
+| `POST` | `/api/auth/reset-password`      | Redefinir senha com token e revogar todas as sessões ativas             |
 
 > Os tokens são enviados automaticamente como cookies `HttpOnly`.
 > Em caso de reutilização de refresh token, todas as sessões ativas do utilizador são revogadas.
@@ -113,9 +115,12 @@ Todas as rotas abaixo exigem sessão válida e permissão de admin no backend (`
 | `GET`    | `/api/protected/admin/roles`                         | Listar papéis e permissões associadas                  |
 | `GET`    | `/api/protected/admin/users`                         | Listar utilizadores com paginação e busca (`pageSize`) |
 | `PATCH`  | `/api/protected/admin/users/:id/role`                | Atualizar papel do utilizador                          |
+| `DELETE` | `/api/protected/admin/users/:id`                     | Desativar utilizador (soft delete) e revogar sessões   |
+| `PATCH`  | `/api/protected/admin/users/:id/restore`             | Reativar utilizador desativado                         |
 | `POST`   | `/api/protected/admin/users/:id/resend-verification` | Reenviar e-mail de verificação para um utilizador      |
 | `GET`    | `/api/protected/admin/sessions`                      | Listar sessões ativas com paginação                    |
 | `DELETE` | `/api/protected/admin/sessions/:id`                  | Revogar sessão específica                              |
+| `GET`    | `/api/protected/admin/audit-logs`                    | Listar registos de auditoria com filtros e paginação   |
 
 ### Utilitário público
 

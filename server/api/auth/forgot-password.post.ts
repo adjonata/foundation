@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
     const body = await readBody(event)
     const { email } = forgotPasswordSchema.parse(body)
 
-    await authService.forgotPassword(email)
+    await authService.forgotPassword({ email })
 
     return ok({ message: 'Se esse e-mail estiver cadastrado, um link de redefinicao foi enviado.' })
   } catch (error) {

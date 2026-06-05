@@ -1,5 +1,20 @@
 import type { PaginatedResult } from '#shared/types/pagination'
 
+/** Entrada de log de auditoria no painel admin. */
+export type AdminAuditLogItem = {
+  id: number
+  actorId: number | null
+  action: string
+  entity: string
+  entityId: string | null
+  metadata: Record<string, unknown>
+  createdAt: string
+  actor: { id: number; email: string; name: string | null } | null
+}
+
+/** Resposta de GET /api/protected/admin/audit-logs */
+export type AdminAuditLogsListResponse = PaginatedResult<AdminAuditLogItem>
+
 /** Resposta de GET /api/protected/admin/permissions */
 export type AdminPermission = {
   id: number

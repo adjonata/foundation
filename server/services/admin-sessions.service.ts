@@ -3,6 +3,7 @@ import type { AdminSessionsQuery } from '#shared/schemas/admin-sessions.query'
 import { buildPaginatedResult, computeSkip } from '#shared/utils/pagination'
 import { authSessionRepository, type AdminActiveSessionRow } from '../repositories/auth-session.repository'
 import { AppError } from '../utils/errors'
+import { audit } from '../utils/audit'
 
 function toListItem(row: AdminActiveSessionRow): AdminSessionListItem {
   return {
@@ -31,11 +32,11 @@ export const adminSessionsService = {
     return buildPaginatedResult(items, total, query.page, query.pageSize)
   },
 
-  /** Revoga uma sessao pelo id numerico (`revokedAt`); 404 se nao existir. */
-  async revokeSession(sessionId: number): Promise<void> {
+  async revokeSession({ sessionId, actorId }: { sessionId: number; actorId: number }): Promise<void> {
     const result = await authSessionRepository.revokeById(sessionId)
     if (result === 'NOT_FOUND') {
       throw new AppError('SESSION_NOT_FOUND', 'Sessao nao encontrada', 404)
     }
+    await audit({ event: 'SESSION_REVOKED', actorId, entityId: String(sessionId) })
   },
 }

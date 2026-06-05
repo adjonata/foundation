@@ -31,6 +31,13 @@ const items = computed<NavigationMenuItem[]>(() => {
       tooltip: { text: 'Sessões ativas e revogação' },
       active: p === '/admin/sessions' || p.startsWith('/admin/sessions/'),
     },
+    {
+      label: 'Auditoria',
+      icon: 'i-lucide-shield-alert',
+      to: '/admin/audit-logs',
+      tooltip: { text: 'Histórico de ações do sistema' },
+      active: p === '/admin/audit-logs' || p.startsWith('/admin/audit-logs/'),
+    },
   ]
 })
 </script>

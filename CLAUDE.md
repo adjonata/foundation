@@ -28,6 +28,22 @@ Sempre seguir a cadeia: `routes → services → repositories → Prisma`
 - Nunca expor `passwordHash` em respostas
 - Comentários e mensagens de erro em português
 
+### Parâmetros de funções e métodos
+
+Funções e métodos com um ou mais parâmetros primitivos devem sempre recebê-los como um único objeto desestruturado. Aplica-se a services, repositories, utils e qualquer outra camada:
+
+```ts
+// ✓ correto
+async restoreUser({ targetUserId, actorId }: { targetUserId: number; actorId: number })
+async audit({ event, actorId, entityId }: AuditParams)
+
+// ✗ evitar
+async restoreUser(targetUserId: number, actorId: number)
+async audit(event: string, actorId: number, entityId: string)
+```
+
+Exceções: funções sem parâmetros e funções que recebem um único objeto já tipado como input de schema Zod (`input: RegisterInput`, `query: AdminUsersQuery`).
+
 ## Padrão de branches
 
 ```

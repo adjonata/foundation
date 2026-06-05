@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
       throw new AppError('MISSING_REFRESH_TOKEN', 'Refresh token nao informado', 401)
     }
 
-    const result = await authService.refresh(refreshToken)
+    const result = await authService.refresh({ refreshToken })
     setAuthCookies(event, result.accessToken, result.refreshToken)
 
     return ok(result.user)

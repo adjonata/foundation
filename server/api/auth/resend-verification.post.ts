@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
       throw new AppError('UNAUTHORIZED', 'Nao autenticado', 401)
     }
 
-    await authService.resendVerification(event.context.auth.userId)
+    await authService.resendVerification({ userId: event.context.auth.userId })
 
     return ok({ sent: true })
   } catch (error) {

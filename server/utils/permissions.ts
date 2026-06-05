@@ -10,6 +10,7 @@ export const PERMISSIONS = {
   ADMIN_USERS_RESTORE: 'admin.users.restore',
   ADMIN_SESSIONS_READ: 'admin.sessions.read',
   ADMIN_SESSIONS_REVOKE: 'admin.sessions.revoke',
+  ADMIN_AUDIT_LOGS_READ: 'admin.audit-logs.read',
 } as const
 
 export type PermissionName = (typeof PERMISSIONS)[keyof typeof PERMISSIONS]
@@ -32,6 +33,7 @@ export const PERMISSION_DEFINITIONS: PermissionDefinition[] = [
   { name: PERMISSIONS.ADMIN_SESSIONS_REVOKE, description: 'Permite revogar sessões no painel admin' },
   { name: PERMISSIONS.ADMIN_USERS_DELETE, description: 'Permite desativar (soft delete) utilizadores no painel admin' },
   { name: PERMISSIONS.ADMIN_USERS_RESTORE, description: 'Permite reativar utilizadores desativados no painel admin' },
+  { name: PERMISSIONS.ADMIN_AUDIT_LOGS_READ, description: 'Permite visualizar registos de auditoria no painel admin' },
 ]
 
 export const ROLE_PERMISSIONS: Record<Role, PermissionName[]> = {

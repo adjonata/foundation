@@ -8,9 +8,9 @@ import { ok } from '../../../../../utils/response'
 
 export default defineEventHandler(async (event) => {
   try {
-    requirePermission(event, PERMISSIONS.ADMIN_USERS_RESEND_VERIFICATION)
+    const auth = requirePermission(event, PERMISSIONS.ADMIN_USERS_RESEND_VERIFICATION)
     const id = adminUserIdParamSchema.parse(getRouterParam(event, 'id'))
-    await adminUsersService.resendVerification(id)
+    await adminUsersService.resendVerification({ targetUserId: id, actorId: auth.userId })
     return ok({ sent: true })
   } catch (error) {
     throw toHttpError(error)

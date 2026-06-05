@@ -6,7 +6,7 @@ import { ok } from '../../utils/response'
 export default defineEventHandler(async (event) => {
   try {
     const refreshToken = getRefreshTokenFromCookie(event)
-    await authService.logout(refreshToken)
+    await authService.logout({ refreshToken })
     clearAuthCookies(event)
 
     return ok({ logout: true })
