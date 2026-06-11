@@ -1,6 +1,14 @@
 import type { Prisma } from '../../prisma/generated/client'
 import { prisma } from '../utils/db'
 
+const userSessionSelect = {
+  id: true,
+  createdAt: true,
+  expiresAt: true,
+} satisfies Prisma.AuthSessionSelect
+
+export type UserSessionRow = Prisma.AuthSessionGetPayload<{ select: typeof userSessionSelect }>
+
 const adminActiveSessionSelect = {
   id: true,
   userId: true,
@@ -42,6 +50,33 @@ export const authSessionRepository = {
     ])
 
     return { total, rows }
+  },
+
+  listActiveForUser({ userId }: { userId: number }) {
+    const now = new Date()
+    return prisma.authSession.findMany({
+      where: { userId, revokedAt: null, expiresAt: { gt: now } },
+      orderBy: { createdAt: 'desc' },
+      select: userSessionSelect,
+    })
+  },
+
+  async revokeByIdForUser({ sessionId, userId }: { sessionId: number; userId: number }) {
+    const row = await prisma.authSession.findUnique({
+      where: { id: sessionId },
+      select: { id: true, userId: true, revokedAt: true },
+    })
+    if (!row || row.userId !== userId) return 'NOT_FOUND' as const
+    if (row.revokedAt) return 'ALREADY_REVOKED' as const
+    await prisma.authSession.update({ where: { id: sessionId }, data: { revokedAt: new Date() } })
+    return 'REVOKED' as const
+  },
+
+  revokeAllExcept({ userId, exceptSessionId }: { userId: number; exceptSessionId: number }) {
+    return prisma.authSession.updateMany({
+      where: { userId, revokedAt: null, id: { not: exceptSessionId } },
+      data: { revokedAt: new Date() },
+    })
   },
 
   /**

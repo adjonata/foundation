@@ -11,6 +11,8 @@ export const AuditEvent = {
   PASSWORD_RESET: { action: 'PASSWORD_RESET', entity: 'User' },
   SESSION_REVOKED: { action: 'SESSION_REVOKED', entity: 'Session' },
   REFRESH_TOKEN_REUSE_DETECTED: { action: 'TOKEN_REUSE_DETECTED', entity: 'Session' },
+  PROFILE_UPDATED: { action: 'PROFILE_UPDATED', entity: 'User' },
+  PASSWORD_CHANGED: { action: 'PASSWORD_CHANGED', entity: 'User' },
 } as const
 
 export type AuditEventKey = keyof typeof AuditEvent
