@@ -10,10 +10,9 @@ Ordem de implementação dentro do back: `schema → migration → repository �
 
 Com base no estado atual do projeto, priorizar nesta ordem:
 
-1. Verificação de e-mail
-2. Reset de senha
-3. Audit log
-4. Rate limiting
+1. Configurações do Usuário (§10) — edição de nome/e-mail e gestão de sessões próprias
+2. Rate Limiting (§12)
+3. Login com Google (§13)
 
 Também adicionar em paralelo:
 
@@ -209,54 +208,58 @@ Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (regist
 
 ### Back
 
-- [ ] Integração com storage: local para dev, S3-compatible para produção
-- [ ] Rota `POST /api/upload` com validação de tipo (image/\*) e tamanho (máx 5MB)
-- [ ] Campo `avatarUrl String?` no model `User`
-- [ ] Migration
-- [ ] Rota `PATCH /api/users/me/avatar` — atualizar avatar
+- [x] Integração com storage: local para dev (MinIO), S3-compatible para produção (Cloudflare R2)
+- [x] Campo `avatarUrl String?` no model `User`
+- [x] Migration
+- [x] Rota `PATCH /api/protected/users/me/avatar` — recebe multipart, faz upload no S3, deleta avatar anterior e atualiza o banco numa única chamada
 
 ### Front
 
-- [ ] Componente `AvatarUpload` com preview e drag-and-drop
-- [ ] Página `/settings/profile` — formulário de dados pessoais + avatar
+- [x] Atom `UserAvatar` — avatar com fallback de iniciais
+- [x] Molecule `AvatarDropzone` — zona drag-and-drop + preview (sem API, emite v-model:file)
+- [x] Organism `usuario/AvatarEditor` — dropzone + chamadas de API + atualiza store
+- [x] Organism `usuario/ProfileCard` — card com avatar, nome, e-mail e role
+- [x] Página `/usuario` — visualização do perfil
+- [x] Página `/usuario/avatar` — edição do avatar
 
 ---
 
-## 10. Notificações In-App
+## 10. Configurações do Usuário
+
+### Back
+
+- [x] Rota `GET /api/protected/users/me` — perfil completo do utilizador autenticado
+- [x] Rota `PATCH /api/protected/users/me` — atualizar nome e e-mail (notifica e-mail antigo + reenvia verificação se e-mail mudar)
+- [x] Rota `PATCH /api/protected/users/me/password` — alterar senha (valida senha atual, revoga outras sessões, envia e-mail de segurança)
+- [x] Rota `GET /api/protected/users/me/sessions` — listar sessões ativas do próprio utilizador
+- [x] Rota `DELETE /api/protected/users/me/sessions/:id` — revogar sessão própria
+
+### Front
+
+- [x] Hero de perfil em `/usuario` — avatar grande com overlay de edição, nome, e-mail, role e badge de verificação
+- [x] Formulário de edição de nome e e-mail em `/usuario` com feedback de verificação pendente
+- [x] Página `/usuario/seguranca` — alterar senha (redireciona para login após sucesso) + listar/revogar sessões
+- [x] Feedback de sucesso/erro em cada ação
+
+---
+
+## 11. Notificações In-App
 
 ### Back
 
 - [ ] Model `Notification` (`userId`, `type`, `title`, `body`, `readAt`, `createdAt`)
 - [ ] Migration
-- [ ] Rota `GET /api/notifications` — listagem das não lidas
-- [ ] Rota `PATCH /api/notifications/:id/read` — marcar como lida
-- [ ] Rota `PATCH /api/notifications/read-all` — marcar todas como lidas
+- [ ] Rota `GET /api/protected/notifications` — listagem das não lidas
+- [ ] Rota `PATCH /api/protected/notifications/:id/read` — marcar como lida
+- [ ] Rota `PATCH /api/protected/notifications/read-all` — marcar todas como lidas
 - [ ] Helper `notify(userId, type, title, body)` em `server/utils/`
 
 ### Front
 
 - [ ] Componente `NotificationBell` no header com badge de contagem
 - [ ] Dropdown com lista das últimas notificações
-- [ ] Página `/notifications` — histórico completo
+- [ ] Página `/notificacoes` — histórico completo
 - [ ] Polling automático a cada 30s para novas notificações
-
----
-
-## 11. Configurações do Usuário
-
-### Back
-
-- [ ] Rota `GET /api/users/me` — perfil completo do usuário autenticado
-- [ ] Rota `PATCH /api/users/me` — atualizar nome e e-mail
-- [ ] Rota `PATCH /api/users/me/password` — alterar senha (valida senha atual)
-- [ ] Rota `GET /api/users/me/sessions` — listar sessões ativas do próprio usuário
-- [ ] Rota `DELETE /api/users/me/sessions/:id` — revogar sessão própria
-
-### Front
-
-- [ ] Página `/settings/profile` — editar nome e avatar
-- [ ] Página `/settings/security` — alterar senha e gerenciar sessões ativas
-- [ ] Feedback de sucesso/erro em cada ação
 
 ---
 
