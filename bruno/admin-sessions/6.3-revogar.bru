@@ -1,0 +1,11 @@
+meta {
+  name: 6.3 Revogar sessão por ID (substitua ID na URL)
+  type: http
+  seq: 3
+}
+
+delete {
+  url: {{baseUrl}}/api/protected/admin/sessions/ID_DA_SESSAO
+  body: none
+  auth: none
+}

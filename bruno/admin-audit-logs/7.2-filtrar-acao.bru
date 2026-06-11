@@ -1,0 +1,15 @@
+meta {
+  name: 7.2 Filtrar por ação
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/protected/admin/audit-logs
+  body: none
+  auth: none
+}
+
+query {
+  action: LOGIN
+}

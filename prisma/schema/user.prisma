@@ -11,6 +11,7 @@ model User {
   passwordHash            String
   role                    Role                     @default(USER)
   emailVerifiedAt         DateTime?
+  avatarUrl               String?
   deletedAt               DateTime?
   authSessions            AuthSession[]
   emailVerificationTokens EmailVerificationToken[]

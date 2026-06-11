@@ -1,0 +1,11 @@
+meta {
+  name: 2.2 Rota protegida sem verificar → 403
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/api/protected/admin/users
+  body: none
+  auth: none
+}

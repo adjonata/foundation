@@ -1,0 +1,17 @@
+meta {
+  name: 7.6 Combinar filtros + paginação
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/api/protected/admin/audit-logs
+  body: none
+  auth: none
+}
+
+query {
+  action: ROLE_CHANGED
+  page: 1
+  pageSize: 5
+}

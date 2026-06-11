@@ -1,0 +1,18 @@
+meta {
+  name: 4.5 Token expirado → 400 TOKEN_EXPIRED
+  type: http
+  seq: 19
+}
+
+post {
+  url: {{baseUrl}}/api/auth/reset-password
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "token": "token-invalido-qualquer",
+    "password": "novaSenha123"
+  }
+}

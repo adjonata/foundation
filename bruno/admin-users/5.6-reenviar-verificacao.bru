@@ -1,0 +1,11 @@
+meta {
+  name: 5.6 Reenviar verificação para usuário (substitua ID)
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/api/protected/admin/users/2/resend-verification
+  body: none
+  auth: none
+}

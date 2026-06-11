@@ -1,0 +1,17 @@
+meta {
+  name: 5.4 Alterar role (substitua ID na URL)
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/api/protected/admin/users/2/role
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "role": "ADMIN"
+  }
+}

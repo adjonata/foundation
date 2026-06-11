@@ -1,0 +1,15 @@
+meta {
+  name: 7.3 Filtrar por entidade
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/protected/admin/audit-logs
+  body: none
+  auth: none
+}
+
+query {
+  entity: User
+}
