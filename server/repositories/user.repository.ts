@@ -141,6 +141,39 @@ export const userRepository = {
     })
   },
 
+  updateAvatar({ userId, avatarUrl }: { userId: number; avatarUrl: string }) {
+    return prisma.user.update({
+      where: { id: userId },
+      data: { avatarUrl },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        avatarUrl: true,
+        emailVerifiedAt: true,
+      },
+    })
+  },
+
+  updateProfile({ userId, name, email }: { userId: number; name?: string; email?: string }) {
+    return prisma.user.update({
+      where: { id: userId },
+      data: {
+        ...(name !== undefined ? { name } : {}),
+        ...(email !== undefined ? { email, emailVerifiedAt: null } : {}),
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        avatarUrl: true,
+        emailVerifiedAt: true,
+      },
+    })
+  },
+
   async restoreById(
     userId: number,
   ): Promise<{ success: true; row: AdminListedUserRow } | { success: false; code: 'NOT_FOUND' | 'ALREADY_ACTIVE' }> {

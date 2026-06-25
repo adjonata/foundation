@@ -1,0 +1,20 @@
+meta {
+  name: Atualizar avatar
+  type: http
+  seq: 1
+}
+
+patch {
+  url: {{baseUrl}}/api/protected/users/me/avatar
+  body: multipartForm
+  auth: none
+}
+
+body:multipart-form {
+  file: @file(/caminho/para/imagem.png)
+}
+
+docs {
+  Envia o arquivo de imagem e atualiza o avatar do utilizador autenticado em uma única chamada.
+  Retorna o objeto AuthUser atualizado com o novo avatarUrl.
+}

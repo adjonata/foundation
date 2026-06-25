@@ -1,0 +1,17 @@
+meta {
+  name: 4.1 Solicitar reset (e-mail existente)
+  type: http
+  seq: 15
+}
+
+post {
+  url: {{baseUrl}}/api/auth/forgot-password
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "{{TEST_EMAIL}}"
+  }
+}

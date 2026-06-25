@@ -1,0 +1,11 @@
+meta {
+  name: 7.1 Listar todos os audit logs (paginado)
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/protected/admin/audit-logs
+  body: none
+  auth: none
+}

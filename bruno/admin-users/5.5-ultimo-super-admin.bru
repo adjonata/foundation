@@ -1,0 +1,17 @@
+meta {
+  name: 5.5 Alterar role do único SUPER_ADMIN → 409 LAST_SUPER_ADMIN
+  type: http
+  seq: 5
+}
+
+patch {
+  url: {{baseUrl}}/api/protected/admin/users/1/role
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "role": "USER"
+  }
+}

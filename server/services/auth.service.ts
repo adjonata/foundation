@@ -53,6 +53,7 @@ function sanitizeUser(user: {
   name: string | null
   role: string
   emailVerifiedAt: Date | null
+  avatarUrl?: string | null
 }): AuthUser {
   return {
     id: user.id,
@@ -60,6 +61,7 @@ function sanitizeUser(user: {
     name: user.name,
     role: user.role,
     emailVerified: user.emailVerifiedAt !== null,
+    avatarUrl: user.avatarUrl ?? null,
   }
 }
 

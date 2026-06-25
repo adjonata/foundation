@@ -1,0 +1,16 @@
+meta {
+  name: 6.2 Listar sessões — página 2
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/protected/admin/sessions
+  body: none
+  auth: none
+}
+
+query {
+  page: 2
+  pageSize: 5
+}

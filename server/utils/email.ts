@@ -58,3 +58,39 @@ export async function sendVerificationEmail(to: string, rawToken: string) {
     throw new AppError('EMAIL_SEND_FAILED', 'Falha ao enviar e-mail de verificacao', 500)
   }
 }
+
+export async function sendEmailChangeNotification(oldEmail: string, newEmail: string) {
+  const resend = getResend()
+  const { error } = await resend.emails.send({
+    from: getEmailFrom(),
+    to: oldEmail,
+    subject: 'Aviso de segurança: e-mail alterado',
+    html: `
+      <p>Olá,</p>
+      <p>O e-mail da sua conta foi alterado para <strong>${newEmail}</strong>.</p>
+      <p>Se você não realizou esta alteração, entre em contato com o suporte imediatamente.</p>
+    `,
+  })
+  if (error) {
+    console.error('[email] Resend retornou erro:', JSON.stringify(error))
+    throw new AppError('EMAIL_SEND_FAILED', 'Falha ao enviar notificação de alteração de e-mail', 500)
+  }
+}
+
+export async function sendPasswordChangedNotification(to: string) {
+  const resend = getResend()
+  const { error } = await resend.emails.send({
+    from: getEmailFrom(),
+    to,
+    subject: 'Aviso de segurança: senha alterada',
+    html: `
+      <p>Olá,</p>
+      <p>A senha da sua conta foi alterada com sucesso.</p>
+      <p>Se você não realizou esta alteração, entre em contato com o suporte imediatamente.</p>
+    `,
+  })
+  if (error) {
+    console.error('[email] Resend retornou erro:', JSON.stringify(error))
+    throw new AppError('EMAIL_SEND_FAILED', 'Falha ao enviar notificação de alteração de senha', 500)
+  }
+}

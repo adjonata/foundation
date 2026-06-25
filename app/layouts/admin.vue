@@ -18,10 +18,11 @@ const navbarTitle = computed(() => {
         <NuxtLink
           v-if="!collapsed"
           to="/"
-          class="truncate text-sm font-semibold text-highlighted"
+          class="inline-flex items-center hover:opacity-80"
           :aria-label="`Voltar à página inicial — ${appName}`"
         >
-          {{ appName }}
+          <img src="/logo.svg" :alt="appName" class="h-[42px] w-auto dark:hidden" />
+          <img src="/logo-white.svg" :alt="appName" class="hidden h-[42px] w-auto dark:block" />
         </NuxtLink>
         <UIcon v-else name="i-lucide-layout-dashboard" class="mx-auto size-5 text-primary" aria-hidden="true" />
       </template>

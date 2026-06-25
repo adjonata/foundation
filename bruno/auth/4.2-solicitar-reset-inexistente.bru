@@ -1,0 +1,17 @@
+meta {
+  name: 4.2 Solicitar reset (e-mail inexistente — resposta neutra)
+  type: http
+  seq: 16
+}
+
+post {
+  url: {{baseUrl}}/api/auth/forgot-password
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "naoexiste@teste.dev"
+  }
+}

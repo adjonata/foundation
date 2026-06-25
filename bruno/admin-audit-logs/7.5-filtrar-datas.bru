@@ -1,0 +1,16 @@
+meta {
+  name: 7.5 Filtrar por intervalo de datas
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/api/protected/admin/audit-logs
+  body: none
+  auth: none
+}
+
+query {
+  from: 2026-01-01T00:00:00Z
+  to: 2026-12-31T23:59:59Z
+}

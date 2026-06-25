@@ -1,0 +1,11 @@
+meta {
+  name: 6.4 Revogar sessão com ID inexistente → 404
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{baseUrl}}/api/protected/admin/sessions/99999
+  body: none
+  auth: none
+}

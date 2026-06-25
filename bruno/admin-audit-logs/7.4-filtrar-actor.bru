@@ -1,0 +1,15 @@
+meta {
+  name: 7.4 Filtrar por actor (substitua ID)
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/protected/admin/audit-logs
+  body: none
+  auth: none
+}
+
+query {
+  actorId: 1
+}

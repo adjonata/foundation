@@ -8,58 +8,11 @@ const appName = config.public.appName as string
 const authStore = useAuthStore()
 
 const showAdminLink = computed(() => authStore.isAuthenticated && isAdminPanelRole(authStore.role))
-
 const roleLabel = computed(() => getRoleDisplayLabel(authStore.role))
 
-const userMenuItems = computed<DropdownMenuItem[][]>(() => {
-  const u = authStore.user
-  if (!u) return []
-
-  const blocks: DropdownMenuItem[][] = [
-    [
-      {
-        type: 'label',
-        label: u.name?.trim() || u.email,
-        description: u.name?.trim() ? u.email : undefined,
-      },
-    ],
-    [
-      {
-        type: 'label',
-        label: 'Papel',
-        description: roleLabel.value,
-      },
-    ],
-  ]
-
-  if (showAdminLink.value) {
-    blocks.push([
-      {
-        label: 'Painel admin',
-        icon: 'i-lucide-layout-dashboard',
-        to: '/admin',
-      },
-    ])
-  }
-
-  blocks.push([
-    {
-      label: 'Sair',
-      icon: 'i-lucide-log-out',
-      color: 'error',
-      onSelect: () => {
-        void handleLogout()
-      },
-    },
-  ])
-
-  return blocks
-})
-
-async function handleLogout() {
-  await authStore.logout()
-  await navigateTo('/entrar')
-}
+const adminContextItem = computed<DropdownMenuItem[] | undefined>(() =>
+  showAdminLink.value ? [{ label: 'Painel admin', icon: 'i-lucide-layout-dashboard', to: '/admin' }] : undefined,
+)
 </script>
 
 <template>
@@ -86,6 +39,7 @@ async function handleLogout() {
         </UColorModeButton>
 
         <template v-if="authStore.isAuthenticated">
+          <MoleculesNotificationsBell />
           <UButton
             color="neutral"
             variant="ghost"
@@ -100,18 +54,7 @@ async function handleLogout() {
           >
             {{ roleLabel }}
           </UButton>
-          <UDropdownMenu :items="userMenuItems">
-            <UButton
-              color="neutral"
-              variant="ghost"
-              trailing-icon="i-lucide-chevron-down"
-              :aria-label="`Menu da conta de ${authStore.user?.email ?? 'utilizador'}`"
-            >
-              <span class="max-w-40 truncate sm:max-w-56">
-                {{ authStore.user?.name?.trim() || authStore.user?.email }}
-              </span>
-            </UButton>
-          </UDropdownMenu>
+          <MoleculesUserMenuDropdown :context-items="adminContextItem" />
         </template>
         <template v-else>
           <UButton color="neutral" variant="ghost" to="/entrar"> Entrar </UButton>

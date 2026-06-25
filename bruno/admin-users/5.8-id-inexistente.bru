@@ -1,0 +1,11 @@
+meta {
+  name: 5.8 Reenviar para ID inexistente → 404
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{baseUrl}}/api/protected/admin/users/99999/resend-verification
+  body: none
+  auth: none
+}

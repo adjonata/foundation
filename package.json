@@ -18,6 +18,7 @@
     "prisma:seed": "tsx ./prisma/seed/index.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1063.0",
     "@iconify-json/lucide": "^1.2.102",
     "@iconify-json/simple-icons": "^1.2.78",
     "@nuxt/icon": "2.2.1",
