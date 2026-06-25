@@ -247,19 +247,19 @@ Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (regist
 
 ### Back
 
-- [ ] Model `Notification` (`userId`, `type`, `title`, `body`, `readAt`, `createdAt`)
-- [ ] Migration
-- [ ] Rota `GET /api/protected/notifications` — listagem das não lidas
-- [ ] Rota `PATCH /api/protected/notifications/:id/read` — marcar como lida
-- [ ] Rota `PATCH /api/protected/notifications/read-all` — marcar todas como lidas
-- [ ] Helper `notify(userId, type, title, body)` em `server/utils/`
+- [x] Model `Notification` (`userId`, `type`, `title`, `body`, `readAt`, `createdAt`)
+- [x] Migration
+- [x] Rota `GET /api/protected/notifications` — listagem das não lidas
+- [x] Rota `PATCH /api/protected/notifications/:id/read` — marcar como lida
+- [x] Rota `PATCH /api/protected/notifications/read-all` — marcar todas como lidas
+- [x] Helper `notify(userId, type, title, body)` em `server/utils/`
 
 ### Front
 
-- [ ] Componente `NotificationBell` no header com badge de contagem
-- [ ] Dropdown com lista das últimas notificações
-- [ ] Página `/notificacoes` — histórico completo
-- [ ] Polling automático a cada 30s para novas notificações
+- [x] Componente `NotificationBell` no header com badge de contagem
+- [x] Dropdown com lista das últimas notificações
+- [x] Página `/notificacoes` — histórico completo
+- [x] Polling automático a cada 60s para novas notificações
 
 ---
 

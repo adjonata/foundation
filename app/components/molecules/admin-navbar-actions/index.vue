@@ -15,6 +15,8 @@ const homeContextItem = [{ label: 'Página inicial', icon: 'i-lucide-home', to: 
       </template>
     </UColorModeButton>
 
+    <MoleculesNotificationsBell />
+
     <UButton
       color="neutral"
       variant="ghost"

@@ -39,6 +39,7 @@ const adminContextItem = computed<DropdownMenuItem[] | undefined>(() =>
         </UColorModeButton>
 
         <template v-if="authStore.isAuthenticated">
+          <MoleculesNotificationsBell />
           <UButton
             color="neutral"
             variant="ghost"

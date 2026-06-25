@@ -44,6 +44,34 @@ async audit(event: string, actorId: number, entityId: string)
 
 Exceções: funções sem parâmetros e funções que recebem um único objeto já tipado como input de schema Zod (`input: RegisterInput`, `query: AdminUsersQuery`).
 
+## Arquitetura do frontend
+
+Sempre seguir a hierarquia de Atomic Design. **Nunca colocar lógica de negócio directamente numa page.**
+
+```
+pages/          → wrapper mínimo: só definePageMeta + useSeoMeta + <TemplatesXxx />
+templates/      → layout da página + composição de organisms (sem lógica de API)
+organisms/      → lógica de API, estado, usePaginated, toasts — UI complexa e autónoma
+molecules/      → combinações de atoms sem estado próprio de API
+atoms/          → componentes base sem lógica de negócio
+```
+
+### Exemplo correto
+
+```
+pages/notificacoes.vue          → <TemplatesNotificacoes /> + definePageMeta + useSeoMeta
+templates/notificacoes.vue      → layout + <OrganismsNotificacoes />
+organisms/notificacoes/index.vue → usePaginated, chamadas à API, toasts, markup
+```
+
+### Regras
+
+- Pages são wrappers — máximo 5 linhas de script
+- Templates só fazem layout e composição, sem `$fetch` nem `useApi`
+- Organisms são os únicos que chamam `useApi()`, `usePaginated()`, `useToast()`
+
+---
+
 ## Padrão de branches
 
 ```
