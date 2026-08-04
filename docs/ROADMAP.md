@@ -267,14 +267,14 @@ Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (regist
 
 ### Back
 
-- [ ] Middleware de rate limit nas rotas sensíveis: login, register, forgot-password, reset-password
-- [ ] Limites por IP: 10 tentativas por 15 minutos nas rotas de auth
-- [ ] Resposta `429 Too Many Requests` com header `Retry-After`
+- [x] Middleware de rate limit nas rotas sensíveis: login, register, forgot-password, reset-password (`server/middleware/03.rate-limit.ts`), contagem por rota+IP persistida no Postgres (model `RateLimitAttempt`, `server/repositories/rate-limit.repository.ts`)
+- [x] Limites por IP: 10 tentativas por 15 minutos nas rotas de auth (`AUTH_RATE_LIMIT_MAX` / `AUTH_RATE_LIMIT_WINDOW` em `server/utils/rateLimit.ts`)
+- [x] Resposta `429 Too Many Requests` com header `Retry-After` e `data: { code: 'RATE_LIMITED', retryAfter }`
 
 ### Front
 
-- [ ] Tratamento do erro 429 no interceptor de fetch
-- [ ] Mensagem de feedback amigável ao usuário bloqueado
+- [x] Tratamento do erro 429 no interceptor de fetch — `useApiBase` (`app/composables/api/base.ts`) normaliza `error.data.retryAfter`
+- [x] Mensagem de feedback amigável ao usuário bloqueado — `getFetchErrorMessage` (`app/utils/fetchError.ts`) formata o tempo de espera; exibida via toast nas páginas de login/cadastro/esqueci-senha/redefinir-senha já existentes
 
 ---
 
