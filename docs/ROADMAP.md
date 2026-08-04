@@ -267,14 +267,14 @@ Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (regist
 
 ### Back
 
-- [ ] Middleware de rate limit nas rotas sensíveis: login, register, forgot-password, reset-password
-- [ ] Limites por IP: 10 tentativas por 15 minutos nas rotas de auth
-- [ ] Resposta `429 Too Many Requests` com header `Retry-After`
+- [x] Middleware de rate limit nas rotas sensíveis: login, register, forgot-password, reset-password (`server/middleware/03.rate-limit.ts`), contagem por rota+IP persistida no Postgres (model `RateLimitAttempt`, `server/repositories/rate-limit.repository.ts`)
+- [x] Limites por IP: 10 tentativas por 15 minutos nas rotas de auth (`AUTH_RATE_LIMIT_MAX` / `AUTH_RATE_LIMIT_WINDOW` em `server/utils/rateLimit.ts`)
+- [x] Resposta `429 Too Many Requests` com header `Retry-After` e `data: { code: 'RATE_LIMITED', retryAfter }`
 
 ### Front
 
-- [ ] Tratamento do erro 429 no interceptor de fetch
-- [ ] Mensagem de feedback amigável ao usuário bloqueado
+- [x] Tratamento do erro 429 no interceptor de fetch — `useApiBase` (`app/composables/api/base.ts`) normaliza `error.data.retryAfter`
+- [x] Mensagem de feedback amigável ao usuário bloqueado — `getFetchErrorMessage` (`app/utils/fetchError.ts`) formata o tempo de espera; exibida via toast nas páginas de login/cadastro/esqueci-senha/redefinir-senha já existentes
 
 ---
 
@@ -293,3 +293,40 @@ Rotas de autenticação na app: **`/entrar`** (login) e **`/cadastrar`** (regist
 
 - [ ] Botão "Continuar com Google" nas páginas `/entrar` e `/cadastrar`
 - [ ] Redirecionamento transparente pós-callback (respeitando query `redirect`)
+
+---
+
+## 14. Observabilidade — Sentry
+
+### Back
+
+- [ ] Dependência `@sentry/nuxt` — configuração unificada client/server via `sentry.server.config.ts`
+- [ ] DSN via env `SENTRY_DSN` (ausente/vazio em dev desativa o envio)
+- [ ] Captura de erros não tratados nas rotas `server/api/**` e `server/middleware/**`
+- [ ] Contexto de usuário no evento (`userId`, `role`) a partir de `event.context.auth`, quando presente
+- [ ] Ignorar erros esperados de negócio (`AppError` com `statusCode < 500`, ex. `INVALID_CREDENTIALS`) para não poluir o Sentry com validação/regra de negócio
+
+### Front
+
+- [ ] `sentry.client.config.ts` com `tracesSampleRate` configurável por ambiente
+- [ ] Captura de erros não tratados do Vue/Nuxt (`vue:error`, `app:error`)
+- [ ] Upload de source maps no build para stack traces legíveis em produção
+
+---
+
+## 15. Checkout com Hotmart
+
+### Back
+
+- [ ] Campos de plano no model `User` (`planStatus`, `planExpiresAt`) ou model `Subscription` dedicado, se precisar de histórico de compras
+- [ ] Migration
+- [ ] Rota `POST /api/webhooks/hotmart` — recebe postback (compra aprovada, reembolso, cancelamento, chargeback) e valida o token `HOTTOK` do payload contra `HOTMART_HOTTOK`
+- [ ] `hotmart.service.ts` — mapeia evento Hotmart → ativa/revoga acesso do utilizador (cria conta pendente se o e-mail da compra ainda não existir)
+- [ ] Idempotência do webhook (Hotmart pode reenviar o mesmo evento) — dedupe pelo `transaction` do payload
+- [ ] Middleware/`requirePermission` bloqueando rotas protegidas para utilizador sem plano ativo
+
+### Front
+
+- [ ] Botão/link "Assinar" apontando para o checkout hospedado da Hotmart (`PUBLIC_HOTMART_CHECKOUT_URL`)
+- [ ] Página `/assinatura` — estado atual do plano (ativo/expirado) e link para o checkout
+- [ ] Tela de bloqueio amigável para utilizador com plano expirado/cancelado

@@ -48,13 +48,23 @@ export function useApiBase() {
     return apiError.statusCode ?? apiError.status ?? 500
   }
 
-  function throwNormalized(error: unknown): never {
-    const apiError = error as ApiLikeError
+  // O $fetch (ofetch) expõe em `error.data` o corpo inteiro da resposta de erro do Nitro
+  // (`{ statusCode, statusMessage, message, data, stack }`), nao so o `data` customizado que
+  // as rotas passam pra `createError`/`toHttpError`. Sem isso, `error.data?.code` do chamador
+  // fica sempre undefined.
+  function unwrapErrorData(error: unknown): unknown {
+    const data = (error as ApiLikeError).data
+    if (data && typeof data === 'object' && 'statusCode' in data) {
+      return (data as { data?: unknown }).data
+    }
+    return data
+  }
 
+  function throwNormalized(error: unknown): never {
     throw createError({
       statusCode: getStatusCode(error),
       statusMessage: getFetchErrorMessage(error),
-      data: apiError.data,
+      data: unwrapErrorData(error),
     })
   }
 
