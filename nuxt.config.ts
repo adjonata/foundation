@@ -14,13 +14,25 @@ export default defineNuxtConfig({
     fallback: 'light',
   },
 
-  modules: ['@nuxt/eslint', '@nuxt/ui', '@pinia/nuxt', '@nuxt/icon', '@vueuse/nuxt'],
+  modules: ['@sentry/nuxt/module', '@nuxt/eslint', '@nuxt/ui', '@pinia/nuxt', '@nuxt/icon', '@vueuse/nuxt'],
 
   runtimeConfig: {
     public: {
       appName: 'Foundation',
+      sentry: {
+        dsn: process.env.NUXT_PUBLIC_SENTRY_DSN, // Use a public environment variable for the DSN
+      },
     },
   },
+
+  sentry: {
+    org: 'foundation-5v',
+    project: 'foundation',
+    // store your auth token in an environment variable
+    authToken: process.env.SENTRY_AUTH_TOKEN,
+  },
+
+  sourcemap: { client: 'hidden' },
 
   devtools: {
     enabled: true,
